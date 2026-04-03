@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>【詳細】アンケート自由記述をAIで分析 — プロンプト解説 | PathLink</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif;
+      background: #f5f7f8;
+      color: #333;
+      line-height: 1.75;
+    }
+
+    /* ── Header ── */
+    .header {
+      background: #fff;
+      border-bottom: 3px solid #3DBFBE;
+      padding: 14px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .logo { font-size: 22px; font-weight: 800; color: #3DBFBE; }
+    .back-link {
+      font-size: 13px;
+      color: #3DBFBE;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-weight: 600;
+    }
+    .back-link:hover { text-decoration: underline; }
+
+    /* ── Hero ── */
+    .hero {
+      background: linear-gradient(135deg, #3DBFBE 0%, #2eaeae 100%);
+      color: #fff;
+      padding: 40px 32px 36px;
+      text-align: center;
+    }
+    .hero-tag {
+      display: inline-block;
+      background: rgba(255,255,255,0.25);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 3px 12px;
+      border-radius: 20px;
+      margin-bottom: 14px;
+      letter-spacing: 1px;
+    }
+    .hero h1 { font-size: 24px; font-weight: 800; line-height: 1.45; margin-bottom: 10px; }
+    .hero p { font-size: 14px; opacity: 0.9; }
+
+    /* ── Layout ── */
+    .container { max-width: 760px; margin: 0 auto; padding: 40px 20px 80px; }
+
+    /* ── TOC ── */
+    .toc {
+      background: #fff;
+      border: 1px solid #d0eded;
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 40px;
+    }
+    .toc-title { font-size: 13px; font-weight: 800; color: #3DBFBE; margin-bottom: 12px; letter-spacing: 1px; }
+    .toc ol { padding-left: 18px; }
+    .toc li { margin: 6px 0; }
+    .toc a { color: #3DBFBE; text-decoration: none; font-size: 14px; }
+    .toc a:hover { text-decoration: underline; }
+
+    /* ── Section ── */
+    .section { margin-bottom: 48px; }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #3DBFBE;
+    }
+    .section-num {
+      background: #3DBFBE;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 800;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .section-title { font-size: 18px; font-weight: 800; color: #222; }
+
+    /* ── Can-do cards ── */
+    .cando-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .cando-card {
+      background: #f0fafa;
+      border: 1px solid #c8e8e8;
+      border-radius: 10px;
+      padding: 14px 16px;
+      font-size: 14px;
+    }
+    .cando-card .icon { font-size: 22px; display: block; margin-bottom: 6px; }
+
+    /* ── Prompt annotated ── */
+    .prompt-wrap {
+      background: #1e2433;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+    .prompt-toolbar {
+      background: #2d3448;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .prompt-toolbar span { color: #7d8ba8; font-size: 12px; font-family: monospace; }
+    .copy-btn {
+      background: #3DBFBE;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 5px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .copy-btn:hover { background: #2eaeae; }
+    .prompt-code {
+      padding: 20px 22px;
+      color: #e2e8f0;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      line-height: 1.7;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .hl-var { color: #f9c74f; font-weight: 700; }
+    .hl-sep { color: #94d2bd; }
+    .hl-cmd { color: #90e0ef; }
+    .hl-list { color: #b7e4c7; }
+    .hl-role { color: #fca5a5; }
+
+    /* ── Annotation cards ── */
+    .annotations { display: flex; flex-direction: column; gap: 14px; margin-bottom: 8px; }
+    .ann {
+      border-radius: 10px;
+      padding: 16px 18px;
+      font-size: 14px;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 10px 14px;
+      align-items: start;
+    }
+    .ann-var   { background: #fffbeb; border: 1px solid #f9c74f; }
+    .ann-sep   { background: #f0fdf4; border: 1px solid #86efac; }
+    .ann-cmd   { background: #eff6ff; border: 1px solid #93c5fd; }
+    .ann-list  { background: #f0fdf4; border: 1px solid #6ee7b7; }
+    .ann-role  { background: #fff1f2; border: 1px solid #fca5a5; }
+
+    .ann-badge {
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 6px;
+      white-space: nowrap;
+      align-self: start;
+    }
+    .ann-var  .ann-badge { background: #f9c74f; color: #7a4f00; }
+    .ann-sep  .ann-badge { background: #86efac; color: #14532d; }
+    .ann-cmd  .ann-badge { background: #93c5fd; color: #1e3a5f; }
+    .ann-list .ann-badge { background: #6ee7b7; color: #064e3b; }
+    .ann-role .ann-badge { background: #fca5a5; color: #7f1d1d; }
+
+    .ann-body strong { font-weight: 700; display: block; margin-bottom: 3px; font-size: 14px; }
+    .ann-body p { font-size: 13px; color: #555; }
+
+    /* ── Steps ── */
+    .steps { display: flex; flex-direction: column; gap: 0; }
+    .step {
+      display: grid;
+      grid-template-columns: 48px 1fr;
+      gap: 0 16px;
+      position: relative;
+    }
+    .step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      left: 23px;
+      top: 48px;
+      width: 2px;
+      height: calc(100% - 24px);
+      background: #d0eded;
+    }
+    .step-num {
+      width: 48px;
+      height: 48px;
+      background: #3DBFBE;
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 800;
+      flex-shrink: 0;
+      z-index: 1;
+    }
+    .step-content { padding: 12px 0 32px; }
+    .step-title { font-size: 16px; font-weight: 800; margin-bottom: 6px; }
+    .step-desc { font-size: 14px; color: #555; }
+    .step-tip {
+      display: inline-block;
+      margin-top: 8px;
+      background: #f0fafa;
+      border: 1px solid #c8e8e8;
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 13px;
+      color: #2d8a89;
+    }
+
+    /* ── Data table ── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    thead tr { background: #3DBFBE; color: #fff; }
+    thead th { padding: 12px 16px; text-align: left; font-weight: 700; }
+    tbody tr:nth-child(odd)  { background: #f8fefe; }
+    tbody tr:nth-child(even) { background: #fff; }
+    tbody td { padding: 12px 16px; border-bottom: 1px solid #e5f5f5; vertical-align: top; }
+    .tag {
+      display: inline-block;
+      background: #e0f7f7;
+      color: #1a7f7e;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+
+    /* ── Notice box ── */
+    .notice-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .notice-item {
+      background: #fffbee;
+      border: 1px solid #f5d96a;
+      border-radius: 10px;
+      padding: 14px 18px;
+      font-size: 14px;
+      color: #5a4800;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+    .notice-item .ni { font-size: 18px; flex-shrink: 0; }
+
+    /* ── Back banner ── */
+    .back-banner {
+      background: linear-gradient(135deg, #3DBFBE 0%, #2eaeae 100%);
+      border-radius: 14px;
+      padding: 24px 28px;
+      text-align: center;
+      margin-top: 48px;
+      color: #fff;
+    }
+    .back-banner p { font-size: 14px; opacity: 0.9; margin-bottom: 14px; }
+    .back-banner a {
+      display: inline-block;
+      background: #fff;
+      color: #3DBFBE;
+      font-weight: 800;
+      font-size: 15px;
+      padding: 12px 32px;
+      border-radius: 50px;
+      text-decoration: none;
+    }
+
+    @media (max-width: 600px) {
+      .cando-grid { grid-template-columns: 1fr; }
+      .hero h1 { font-size: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="logo">PathLink</div>
+    <a class="back-link" href="2026-04-03_data_yoor.html">← 投稿文に戻る</a>
+  </header>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-tag">📊 FRIDAY · データ活用術 — 詳細解説</div>
+    <h1>アンケートの自由記述を<br>AIで一括分析するプロンプト</h1>
+    <p>プロンプトの全文 ＋ 「なぜこう書くのか」の解説付き</p>
+  </div>
+
+  <div class="container">
+
+    <!-- TOC -->
+    <div class="toc">
+      <div class="toc-title">📌 CONTENTS</div>
+      <ol>
+        <li><a href="#cando">このプロンプトでできること</a></li>
+        <li><a href="#prompt">コピペ用プロンプト（全文）</a></li>
+        <li><a href="#annotation">プロンプトの意図・解説</a></li>
+        <li><a href="#steps">使い方 3ステップ</a></li>
+        <li><a href="#data-types">どんなデータに使える？</a></li>
+        <li><a href="#notes">注意点</a></li>
+      </ol>
+    </div>
+
+    <!-- 1. できること -->
+    <div class="section" id="cando">
+      <div class="section-header">
+        <div class="section-num">1</div>
+        <div class="section-title">このプロンプトでできること 🎯</div>
+      </div>
+      <div class="cando-grid">
+        <div class="cando-card"><span class="icon">🏷️</span>コメントの主なテーマ・トピックを自動で分類</div>
+        <div class="cando-card"><span class="icon">😊</span>ポジティブな意見の傾向を箇条書きで整理</div>
+        <div class="cando-card"><span class="icon">🔧</span>改善を求める声・課題を洗い出し</div>
+        <div class="cando-card"><span class="icon">💡</span>次年度に向けた改善提案を自動生成</div>
+        <div class="cando-card"><span class="icon">📌</span>特に注目すべきコメントを原文引用で抜粋</div>
+        <div class="cando-card"><span class="icon">📄</span>報告書・事業評価にそのまま使えるまとめ文</div>
+      </div>
+    </div>
+
+    <!-- 2. プロンプト全文 -->
+    <div class="section" id="prompt">
+      <div class="section-header">
+        <div class="section-num">2</div>
+        <div class="section-title">コピペ用プロンプト（全文）📋</div>
+      </div>
+      <div class="prompt-wrap">
+        <div class="prompt-toolbar">
+          <span>prompt.txt</span>
+          <button class="copy-btn" onclick="copyPrompt()">📋 コピー</button>
+        </div>
+        <div class="prompt-code" id="prompt-text"><span class="hl-var">以下は、【アンケート名（例：2025年度活動満足度アンケート）】で収集した自由記述コメントの一覧です。</span>
+
+<span class="hl-sep">---
+【コメントをここに貼り付けてください】
+---</span>
+
+<span class="hl-cmd">このコメント群を分析して、以下の形式で整理してください：</span>
+
+<span class="hl-list">1. 主なテーマ・トピック（上位5件）
+2. ポジティブな意見の傾向（箇条書き3〜5点）
+3. 改善を求める意見・課題（箇条書き3〜5点）
+4. 特に注目すべきコメント（原文引用＋理由）
+5. 次年度に向けた改善提案（2〜3点）</span>
+
+<span class="hl-role">読み手は団体の事務局です。難しい言葉は使わず、わかりやすく整理してください。</span></div>
+      </div>
+    </div>
+
+    <!-- 3. アノテーション -->
+    <div class="section" id="annotation">
+      <div class="section-header">
+        <div class="section-num">3</div>
+        <div class="section-title">プロンプトの意図・解説 🔍</div>
+      </div>
+      <p style="font-size:14px;color:#666;margin-bottom:20px;">色分けされた各パーツが、なぜその書き方なのかを解説します。</p>
+
+      <div class="annotations">
+        <div class="ann ann-var">
+          <span class="ann-badge">🟡 文脈設定</span>
+          <div class="ann-body">
+            <strong>「以下は、【アンケート名】で収集した…」</strong>
+            <p>AIに「これは何のデータか」を最初に伝えます。脈絡なくコメントだけ渡すと的外れな分析になりがちです。<strong>【 】部分を実際のアンケート名に書き換える</strong>ことで、分析の精度が上がります。</p>
+          </div>
+        </div>
+        <div class="ann ann-sep">
+          <span class="ann-badge">🟢 データ区切り</span>
+          <div class="ann-body">
+            <strong>「---（区切り線）」</strong>
+            <p><code>---</code> で囲むことで、「ここからここまでがデータ」とAIに明示します。指示文とデータが混ざると誤った解釈をすることがあるため、<strong>区切り線は省略しないのがポイント</strong>です。</p>
+          </div>
+        </div>
+        <div class="ann ann-cmd">
+          <span class="ann-badge">🔵 出力指示</span>
+          <div class="ann-body">
+            <strong>「以下の形式で整理してください」</strong>
+            <p>「分析して」だけだとAIが自由な形式で返してきます。<strong>「以下の形式で」と言うことで構造化された回答</strong>が返り、そのままコピペして使いやすくなります。</p>
+          </div>
+        </div>
+        <div class="ann ann-list">
+          <span class="ann-badge">🟩 項目リスト</span>
+          <div class="ann-body">
+            <strong>「1. 主なテーマ… 2. ポジティブな意見… 3. 改善点…」</strong>
+            <p>番号で何を出してほしいかを列挙することで、<strong>項目の漏れを防ぎます</strong>。「テーマ」「ポジティブ」「課題」「注目コメント」「提案」と目的別に分けることで、報告書にそのまま転用できます。</p>
+          </div>
+        </div>
+        <div class="ann ann-role">
+          <span class="ann-badge">🔴 読者設定</span>
+          <div class="ann-body">
+            <strong>「読み手は団体の事務局です。難しい言葉は使わず…」</strong>
+            <p>AIは読者像を指定しないと、専門用語や硬い文体で返すことがあります。<strong>「誰が読む文章か」を伝えることで語彙・文体が自動で調整</strong>されます。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. 使い方ステップ -->
+    <div class="section" id="steps">
+      <div class="section-header">
+        <div class="section-num">4</div>
+        <div class="section-title">使い方 3ステップ 🚀</div>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-title">データを準備する</div>
+            <div class="step-desc">アンケートの自由記述コメントをスプレッドシートやWordからコピーします。名前・住所・連絡先など個人が特定できる情報は<strong>この時点で削除</strong>してください。</div>
+            <span class="step-tip">💡 目安は30〜50件。多すぎると分析精度が下がることがあります</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="step-title">プロンプトを貼り付けてカスタマイズ</div>
+            <div class="step-desc">上のプロンプトをコピーして ChatGPT / Claude に貼り付けます。<strong>【アンケート名】</strong>を実際のアンケート名に書き換え、<strong>【コメントをここに貼り付けてください】</strong>の部分にデータを貼ります。</div>
+            <span class="step-tip">💡 コメントは改行で区切って貼るとAIが読みやすくなります</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="step-title">出力を確認・報告書に活用</div>
+            <div class="step-desc">AIの出力を確認します。気になる点や追加したい切り口があれば「〇〇についてもう少し詳しく」と続けて聞けばOKです。内容は必ず担当者がチェックしてから使用してください。</div>
+            <span class="step-tip">💡 「表形式でまとめ直して」と追加指示すると報告書に貼りやすくなります</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. データ種別 -->
+    <div class="section" id="data-types">
+      <div class="section-header">
+        <div class="section-num">5</div>
+        <div class="section-title">どんなデータに使える？ 📂</div>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>データの種類</th>
+            <th>具体例</th>
+            <th>AIに渡す形式</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="tag">満足度調査</span></td>
+            <td>参加者の感想・自由記述</td>
+            <td>テキストをそのままコピペ</td>
+          </tr>
+          <tr>
+            <td><span class="tag">事業評価</span></td>
+            <td>スタッフ・ボランティアの振り返りコメント</td>
+            <td>回答欄の文章をまとめて貼付</td>
+          </tr>
+          <tr>
+            <td><span class="tag">問い合わせ</span></td>
+            <td>よくある質問・要望メール</td>
+            <td>メール本文を箇条書きで貼付</td>
+          </tr>
+          <tr>
+            <td><span class="tag">会員調査</span></td>
+            <td>会員ニーズ・要望アンケート</td>
+            <td>コメント欄の文章を一覧で貼付</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 6. 注意点 -->
+    <div class="section" id="notes">
+      <div class="section-header">
+        <div class="section-num">6</div>
+        <div class="section-title">注意点 ⚠️</div>
+      </div>
+      <div class="notice-list">
+        <div class="notice-item">
+          <span class="ni">🔒</span>
+          <div><strong>個人情報を含めない</strong><br>名前・住所・電話番号・メールアドレスが含まれるコメントは、貼り付け前に必ず削除または匿名化してください。</div>
+        </div>
+        <div class="notice-item">
+          <span class="ni">📏</span>
+          <div><strong>コメント数の目安は30〜50件</strong><br>多すぎると要約の精度が落ちたり、文字数制限に引っかかることがあります。件数が多い場合は「前半30件」「後半30件」に分けて分析し、最後にまとめると精度が上がります。</div>
+        </div>
+        <div class="notice-item">
+          <span class="ni">👀</span>
+          <div><strong>AIの出力は必ず確認する</strong><br>AIは存在しないコメントを「要約」として作り出すことがあります（ハルシネーション）。特に「原文引用」部分は元のデータと照合して確認してください。</div>
+        </div>
+        <div class="notice-item">
+          <span class="ni">💻</span>
+          <div><strong>無料版でもOK</strong><br>ChatGPT無料版（GPT-4o mini）やClaude無料版でも十分動作します。有料版を使うと一度に処理できる文字数が増え、より精度の高い分析が可能です。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Back banner -->
+    <div class="back-banner">
+      <p>📋 Yoor投稿文・使える場面の概要はこちら</p>
+      <a href="2026-04-03_data_yoor.html">← 投稿文ページに戻る</a>
+    </div>
+
+  </div>
+
+  <script>
+    function copyPrompt() {
+      const raw = `以下は、【アンケート名（例：2025年度活動満足度アンケート）】で収集した自由記述コメントの一覧です。\n\n---\n【コメントをここに貼り付けてください】\n---\n\nこのコメント群を分析して、以下の形式で整理してください：\n\n1. 主なテーマ・トピック（上位5件）\n2. ポジティブな意見の傾向（箇条書き3〜5点）\n3. 改善を求める意見・課題（箇条書き3〜5点）\n4. 特に注目すべきコメント（原文引用＋理由）\n5. 次年度に向けた改善提案（2〜3点）\n\n読み手は団体の事務局です。難しい言葉は使わず、わかりやすく整理してください。`;
+      navigator.clipboard.writeText(raw).then(() => {
+        const btn = document.querySelector('.copy-btn');
+        btn.textContent = '✅ コピー完了！';
+        setTimeout(() => { btn.textContent = '📋 コピー'; }, 2000);
+      });
+    }
+  </script>
+
+</body>
+</html>

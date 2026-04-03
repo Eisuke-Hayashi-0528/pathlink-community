@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>📊 データ活用術：アンケートの自由記述をAIで一括分析 | PathLink</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif;
+      background: #f5f7f8;
+      color: #333;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    .header {
+      background: #fff;
+      border-bottom: 3px solid #3DBFBE;
+      padding: 14px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      font-size: 22px;
+      font-weight: 800;
+      color: #3DBFBE;
+      letter-spacing: 0.5px;
+    }
+    .header-tag {
+      background: #3DBFBE;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 20px;
+    }
+
+    /* ── Main card ── */
+    .card {
+      max-width: 680px;
+      margin: 40px auto;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+      overflow: hidden;
+    }
+
+    .card-header {
+      background: linear-gradient(135deg, #3DBFBE 0%, #2eaeae 100%);
+      color: #fff;
+      padding: 28px 32px 24px;
+    }
+    .card-type {
+      font-size: 12px;
+      font-weight: 700;
+      background: rgba(255,255,255,0.25);
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      letter-spacing: 1px;
+    }
+    .card-title {
+      font-size: 22px;
+      font-weight: 800;
+      line-height: 1.4;
+    }
+    .card-date {
+      font-size: 12px;
+      margin-top: 8px;
+      opacity: 0.85;
+    }
+
+    .card-body { padding: 32px; }
+
+    /* ── Hook ── */
+    .hook {
+      background: #f0fafa;
+      border-left: 4px solid #3DBFBE;
+      border-radius: 0 12px 12px 0;
+      padding: 18px 20px;
+      font-size: 16px;
+      line-height: 1.8;
+      margin-bottom: 28px;
+    }
+
+    /* ── Section ── */
+    .section-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: #3DBFBE;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    /* ── Use cases ── */
+    .usecase-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+    .usecase-list li {
+      background: #f8fefe;
+      border: 1px solid #d0eded;
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .usecase-list .emoji { font-size: 20px; flex-shrink: 0; }
+
+    /* ── Notice ── */
+    .notice {
+      background: #fffbee;
+      border: 1px solid #f5d96a;
+      border-radius: 10px;
+      padding: 14px 18px;
+      font-size: 14px;
+      color: #7a6200;
+      margin-bottom: 32px;
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+    }
+    .notice .icon { font-size: 18px; flex-shrink: 0; }
+
+    /* ── CTA Button ── */
+    .cta-section {
+      text-align: center;
+      padding: 24px 0 8px;
+      border-top: 1px solid #eee;
+    }
+    .cta-label {
+      font-size: 14px;
+      color: #888;
+      margin-bottom: 14px;
+    }
+    .cta-btn {
+      display: inline-block;
+      background: linear-gradient(135deg, #3DBFBE, #2eaeae);
+      color: #fff;
+      font-size: 16px;
+      font-weight: 800;
+      padding: 16px 40px;
+      border-radius: 50px;
+      text-decoration: none;
+      box-shadow: 0 4px 16px rgba(61,191,190,0.4);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .cta-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(61,191,190,0.45);
+    }
+    .cta-sub {
+      font-size: 12px;
+      color: #aaa;
+      margin-top: 10px;
+    }
+
+    /* ── Next preview ── */
+    .next-preview {
+      max-width: 680px;
+      margin: 0 auto 48px;
+      background: #fff;
+      border-radius: 12px;
+      border: 1px dashed #3DBFBE;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .next-label {
+      font-size: 11px;
+      font-weight: 800;
+      color: #3DBFBE;
+      letter-spacing: 1px;
+      flex-shrink: 0;
+    }
+    .next-text {
+      font-size: 14px;
+      color: #555;
+    }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 12px;
+      color: #bbb;
+    }
+
+    @media (max-width: 720px) {
+      .card { margin: 16px; }
+      .card-body { padding: 20px; }
+      .header { padding: 12px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="logo">PathLink</div>
+    <div class="header-tag">NPO AI コミュニティ</div>
+  </header>
+
+  <!-- Main card -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-type">📊 FRIDAY · データ活用術</div>
+      <div class="card-title">アンケートの自由記述、<br>AIで一括分析してみませんか？</div>
+      <div class="card-date">2026年4月3日（金）</div>
+    </div>
+
+    <div class="card-body">
+
+      <!-- Hook -->
+      <div class="hook">
+        😣 アンケートを回収したはいいけど…<br>
+        「自由記述が多すぎて全部読み切れない」<br>
+        「集計に時間がかかって報告書が後回しに」<br><br>
+        そんな経験、ありませんか？<br><br>
+        今日はコメントを<strong>コピペして貼るだけ</strong>で、傾向・課題・改善提案まで整理してくれるプロンプトをご紹介します✨
+      </div>
+
+      <!-- Use cases -->
+      <div class="section-title">💡 こんなときに使えます</div>
+      <ul class="usecase-list">
+        <li>
+          <span class="emoji">📋</span>
+          <span>参加者アンケートの自由記述コメントをまとめたいとき</span>
+        </li>
+        <li>
+          <span class="emoji">📝</span>
+          <span>事業評価シートのスタッフ振り返りコメントを整理したいとき</span>
+        </li>
+        <li>
+          <span class="emoji">📬</span>
+          <span>問い合わせや要望メールの傾向を把握したいとき</span>
+        </li>
+      </ul>
+
+      <!-- Notice -->
+      <div class="notice">
+        <span class="icon">⚠️</span>
+        <span>貼り付ける前に、名前・住所・連絡先などの個人情報は必ず削除してください。</span>
+      </div>
+
+      <!-- CTA -->
+      <div class="cta-section">
+        <div class="cta-label">プロンプトの中身と使い方はこちら 👇</div>
+        <a class="cta-btn" href="2026-04-03_data_detail.html">
+          📄 詳しいプロンプトと使い方を見る
+        </a>
+        <div class="cta-sub">コピペ用プロンプト・意図の解説・ステップガイド付き</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Next preview -->
+  <div class="next-preview">
+    <div class="next-label">NEXT →</div>
+    <div class="next-text">🎯 <strong>月曜日</strong>：今週のコピペプロンプト — 助成金申請書の下書き作成</div>
+  </div>
+
+  <footer>© 2025 Path Link</footer>
+
+</body>
+</html>
