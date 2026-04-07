@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CLAUDE.mdで毎回の指示をゼロに！ 詳細ガイド | PathLink</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #f5f7f8; color: #333; line-height: 1.7; }
+
+        /* Sticky header */
+        .site-header { position: sticky; top: 0; z-index: 100; background: #fff; border-top: 4px solid #3DBFBE; padding: 10px 24px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 1px 6px rgba(0,0,0,0.07); }
+        .logo { font-size: 1rem; font-weight: 700; color: #3DBFBE; }
+        .back-link { font-size: 0.85rem; color: #3DBFBE; text-decoration: none; display: flex; align-items: center; gap: 4px; }
+        .back-link:hover { text-decoration: underline; }
+
+        /* Hero */
+        .hero { background: linear-gradient(135deg, #3DBFBE 0%, #2A9D8E 100%); color: #fff; padding: 40px 24px; text-align: center; }
+        .hero .type-badge { background: rgba(255,255,255,0.25); border-radius: 20px; padding: 4px 14px; font-size: 0.8rem; display: inline-block; margin-bottom: 12px; }
+        .hero h1 { font-size: 1.5rem; line-height: 1.5; margin-bottom: 10px; }
+        .hero .date { font-size: 0.82rem; opacity: 0.85; }
+
+        /* Layout */
+        .container { max-width: 720px; margin: 0 auto; padding: 24px 16px 60px; }
+
+        /* TOC */
+        .toc { background: #fff; border-radius: 10px; padding: 20px 24px; margin-bottom: 24px; box-shadow: 0 1px 8px rgba(0,0,0,0.06); }
+        .toc h2 { font-size: 0.95rem; color: #3DBFBE; margin-bottom: 12px; font-weight: 700; }
+        .toc ol { padding-left: 20px; }
+        .toc li { margin-bottom: 6px; }
+        .toc a { color: #2A9D8E; text-decoration: none; font-size: 0.9rem; }
+        .toc a:hover { text-decoration: underline; }
+
+        /* Section cards */
+        .sec { background: #fff; border-radius: 10px; padding: 28px 24px; margin-bottom: 20px; box-shadow: 0 1px 8px rgba(0,0,0,0.06); }
+        .sec-title { font-size: 1.1rem; font-weight: 700; color: #2A9D8E; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 2px solid #e8f8f7; display: flex; align-items: center; gap: 8px; }
+
+        /* Yoor repost box */
+        .yoor-box { background: #f0fafa; border: 1px solid #b2e4e3; border-radius: 8px; padding: 18px; font-size: 0.93rem; white-space: pre-wrap; line-height: 1.8; }
+
+        /* Feature grid */
+        .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 12px; }
+        .feature-card { background: #f5f7f8; border-radius: 8px; padding: 16px; text-align: center; }
+        .feature-card .icon { font-size: 2rem; margin-bottom: 8px; }
+        .feature-card .label { font-size: 0.88rem; font-weight: 600; color: #333; margin-bottom: 4px; }
+        .feature-card .desc { font-size: 0.82rem; color: #666; }
+
+        /* Code block */
+        .code-wrap { position: relative; margin-top: 12px; }
+        .code-block { background: #1e2432; color: #e0e0e0; border-radius: 8px; padding: 20px; font-family: 'Courier New', Courier, monospace; font-size: 0.85rem; line-height: 1.7; overflow-x: auto; white-space: pre; }
+        .code-block .var { color: #ffd700; font-weight: 600; }
+        .code-block .comment { color: #7ec8a0; }
+        .code-block .heading { color: #80d4ff; font-weight: 600; }
+        .copy-btn { position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: #fff; padding: 4px 10px; border-radius: 6px; font-size: 0.78rem; cursor: pointer; transition: background 0.2s; }
+        .copy-btn:hover { background: rgba(255,255,255,0.3); }
+
+        /* Annotation cards */
+        .annotation-list { display: flex; flex-direction: column; gap: 12px; margin-top: 12px; }
+        .annotation { display: flex; gap: 14px; align-items: flex-start; background: #f9fafb; border-radius: 8px; padding: 14px 16px; }
+        .annotation .num { background: #3DBFBE; color: #fff; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.82rem; font-weight: 700; flex-shrink: 0; margin-top: 2px; }
+        .annotation .text h4 { font-size: 0.9rem; font-weight: 700; color: #333; margin-bottom: 4px; }
+        .annotation .text p { font-size: 0.87rem; color: #555; }
+
+        /* Stepper */
+        .stepper { display: flex; flex-direction: column; gap: 0; margin-top: 12px; }
+        .step { display: flex; gap: 16px; position: relative; }
+        .step:not(:last-child)::before { content: ''; position: absolute; left: 19px; top: 42px; bottom: 0; width: 2px; background: #e0f5f5; }
+        .step-num { background: #3DBFBE; color: #fff; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; flex-shrink: 0; }
+        .step-body { padding-bottom: 24px; flex: 1; }
+        .step-body h4 { font-size: 0.95rem; font-weight: 700; color: #333; margin-bottom: 6px; margin-top: 6px; }
+        .step-body p { font-size: 0.88rem; color: #555; }
+        .step-body code { background: #f0f0f0; border-radius: 4px; padding: 2px 6px; font-size: 0.83rem; font-family: 'Courier New', monospace; }
+
+        /* Table */
+        .data-table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 0.88rem; }
+        .data-table th { background: #3DBFBE; color: #fff; padding: 10px 14px; text-align: left; font-weight: 600; }
+        .data-table td { padding: 10px 14px; border-bottom: 1px solid #f0f0f0; }
+        .data-table tr:nth-child(even) td { background: #f9fafb; }
+
+        /* FAQ */
+        .faq-list { display: flex; flex-direction: column; gap: 14px; margin-top: 12px; }
+        .faq-item { border: 1px solid #e8f8f7; border-radius: 8px; overflow: hidden; }
+        .faq-q { background: #e8f8f7; padding: 13px 16px; font-size: 0.9rem; font-weight: 600; color: #2A9D8E; }
+        .faq-q::before { content: 'Q. '; }
+        .faq-a { padding: 13px 16px; font-size: 0.88rem; color: #555; }
+        .faq-a::before { content: 'A. '; color: #3DBFBE; font-weight: 700; }
+
+        /* Warning */
+        .warning-card { background: #fff8e1; border-left: 4px solid #ffc107; padding: 16px 18px; border-radius: 0 8px 8px 0; }
+        .warning-card h4 { color: #b8860b; font-size: 0.92rem; margin-bottom: 8px; }
+        .warning-card ul { padding-left: 18px; font-size: 0.88rem; color: #555; }
+        .warning-card li { margin-bottom: 6px; }
+
+        /* Back banner */
+        .back-banner { background: linear-gradient(135deg, #3DBFBE 0%, #2A9D8E 100%); border-radius: 10px; padding: 22px; text-align: center; margin-top: 24px; }
+        .back-banner a { color: #fff; text-decoration: none; font-size: 0.95rem; font-weight: 700; }
+        .back-banner a:hover { text-decoration: underline; }
+
+        @media (max-width: 480px) {
+            .hero { padding: 28px 16px; }
+            .hero h1 { font-size: 1.2rem; }
+            .sec { padding: 20px 16px; }
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <span class="logo">🔗 PathLink Community</span>
+        <a href="2026-04-08_claude-code_yoor.html" class="back-link">← 投稿文に戻る</a>
+    </header>
+
+    <div class="hero">
+        <div class="type-badge">🛠️ Claude Code入門Tips</div>
+        <h1>CLAUDE.mdで毎回の指示をゼロに！<br>Claude Codeをあなたの専属AIアシスタントに</h1>
+        <div class="date">2026年4月8日（水曜）</div>
+    </div>
+
+    <div class="container">
+
+        <!-- TOC -->
+        <div class="toc">
+            <h2>📋 目次</h2>
+            <ol>
+                <li><a href="#what-you-can-do">これができるようになります！</a></li>
+                <li><a href="#template">コピペ用CLAUDE.mdテンプレート</a></li>
+                <li><a href="#explanation">テンプレートの意図・解説</a></li>
+                <li><a href="#steps">Step by Stepガイド</a></li>
+                <li><a href="#faq">よくある質問</a></li>
+                <li><a href="#warning">注意点</a></li>
+            </ol>
+        </div>
+
+        <!-- Section 0: Yoor repost -->
+        <div class="sec">
+            <div class="sec-title">📝 今日のYoor投稿文（再掲）</div>
+            <div class="yoor-box">毎回AIに「うちはNPOで、親しみやすい文体で書いて」って説明するの、地味に面倒だな…と思ったことありませんか？😣
+
+実は一度だけ設定ファイル（CLAUDE.md）を書いておくと、以降はAIが自動的に組織のルールを覚えてくれるんです✨
+
+こんな場面で使えます：
+📄 毎回説明しなくてもAIが文脈を理解
+📧 メール・報告書の書き方ルールを事前登録
+📊 よく使う書類を形式ごと一発生成
+
+⚠️ CLAUDE.mdはClaude Codeだけが読むファイルなので外部に漏れません🔒 パスワードや個人情報は書かないようにしましょう。
+
+詳しい設定手順とコピペ用テンプレートはこちら👇
+https://eisuke-hayashi-0528.github.io/pathlink-community/2026-04-08_claude-code_detail.html
+
+次回（木曜）：📚 AI基礎知識 — ハルシネーションを見抜く3つのポイント</div>
+        </div>
+
+        <!-- Section 1: できること -->
+        <div class="sec" id="what-you-can-do">
+            <div class="sec-title">✨ これができるようになります！</div>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="icon">🧠</div>
+                    <div class="label">組織ルールを記憶</div>
+                    <div class="desc">文体・トーン・用語を一度設定すればずっと守ってくれる</div>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">⚡</div>
+                    <div class="label">説明コストがゼロに</div>
+                    <div class="desc">毎回の背景説明が不要になり、質問がシンプルに</div>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">📋</div>
+                    <div class="label">書類を一発生成</div>
+                    <div class="desc">登録したフォーマットで報告書・メールを即座に作成</div>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🔒</div>
+                    <div class="label">安全にカスタマイズ</div>
+                    <div class="desc">このファイルはあなたのPC内にのみ存在し外部非公開</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 2: テンプレート -->
+        <div class="sec" id="template">
+            <div class="sec-title">📋 コピペ用 CLAUDE.mdテンプレート</div>
+            <p style="font-size:0.9rem; color:#555; margin-bottom:12px;">以下を<strong>そのままコピー</strong>して、<span style="color:#3DBFBE; font-weight:600;">【 】の部分を自分の団体情報に書き換えて</span>ください。</p>
+            <div class="code-wrap">
+                <pre class="code-block"><span class="heading"># 【団体名】のClaude設定ファイル</span>
+
+<span class="heading">## あなたの役割</span>
+あなたは<span class="var">【団体名】</span>の業務をサポートするAIアシスタントです。
+<span class="var">【団体名】</span>は<span class="var">【活動内容を1〜2文で記入】</span>NPO法人です。
+
+<span class="heading">## 文体・トーンのルール</span>
+<span class="comment">- 親しみやすく、でも丁寧な敬語を使う
+- 難しい専門用語は使わず、わかりやすく説明する
+- 文末は「〜です」「〜ます」を基本とする
+- メールの場合は「お世話になっております」で始める</span>
+
+<span class="heading">## よく使う書類のフォーマット</span>
+<span class="comment">- 報告書：①概要 ②実績 ③課題 ④次期計画 の順で書く
+- メール：件名は「【団体名】〜について」の形式
+- SNS：140字以内、改行を活用、ハッシュタグは最後に3つまで
+- 議事録：日時・参加者・決定事項・次回ToDoの順</span>
+
+<span class="heading">## 注意事項</span>
+<span class="comment">- 個人名や住所などの個人情報は出力しない
+- 助成金申請書は「です・ます」調で統一する
+- データは実際の数値のみを使用し、推測で補完しない
+- 不確かな情報は「確認が必要です」と明示する</span></pre>
+                <button class="copy-btn" onclick="copyCode(this)">📋 コピー</button>
+            </div>
+        </div>
+
+        <!-- Section 3: 意図・解説 -->
+        <div class="sec" id="explanation">
+            <div class="sec-title">💡 テンプレートの意図・解説</div>
+            <p style="font-size:0.9rem; color:#555; margin-bottom:14px;">なぜこの項目を書くのか、それぞれの意味を解説します。</p>
+            <div class="annotation-list">
+                <div class="annotation">
+                    <div class="num">1</div>
+                    <div class="text">
+                        <h4>「あなたの役割」セクション</h4>
+                        <p>AIは「どの組織のために動くか」を明示されることで、的外れな回答を大幅に減らせます。「福祉系NPO」「環境系NPO」など一言添えるだけで、文章のトーンや使う言葉が変わります。</p>
+                    </div>
+                </div>
+                <div class="annotation">
+                    <div class="num">2</div>
+                    <div class="text">
+                        <h4>「文体・トーンのルール」セクション</h4>
+                        <p>AIはデフォルトでやや硬い文体を使いがちです。「親しみやすく」「〜ます調」など明示することで、毎回の微調整が不要になります。メールの書き出しルールは特に効果大です。</p>
+                    </div>
+                </div>
+                <div class="annotation">
+                    <div class="num">3</div>
+                    <div class="text">
+                        <h4>「よく使う書類のフォーマット」セクション</h4>
+                        <p>「いつもの報告書のフォーマットで」と頼むだけで、①概要→②実績→③課題→④計画 の構成で自動的に作成してくれます。団体ごとのフォーマットを登録しておくのがポイントです。</p>
+                    </div>
+                </div>
+                <div class="annotation">
+                    <div class="num">4</div>
+                    <div class="text">
+                        <h4>「注意事項」セクション</h4>
+                        <p>ここが最重要です。「個人情報を出力しない」「数値は推測しない」など安全性に関するルールを書いておくと、AIが誤った情報を自信満々に出力するリスク（ハルシネーション）を下げられます。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 4: Step by Step -->
+        <div class="sec" id="steps">
+            <div class="sec-title">🪜 Step by Stepガイド</div>
+            <div class="stepper">
+                <div class="step">
+                    <div class="step-num">1</div>
+                    <div class="step-body">
+                        <h4>Claude Codeをインストールする</h4>
+                        <p>Anthropic公式サイトからClaude Codeをインストールします。MacとWindowsどちらにも対応しています。インストール後、ターミナル（コマンドプロンプト）で <code>claude</code> と入力して起動を確認しましょう。</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-num">2</div>
+                    <div class="step-body">
+                        <h4>作業フォルダを決める</h4>
+                        <p>Claude Codeを使いたい作業フォルダ（例：<code>~/Documents/npo-work</code>）を決めます。CLAUDE.mdはこのフォルダの中に置くと、そのフォルダ内の作業時だけ設定が読み込まれます。</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-num">3</div>
+                    <div class="step-body">
+                        <h4>CLAUDE.mdファイルを作成する</h4>
+                        <p>作業フォルダの中に <code>CLAUDE.md</code> というファイルを新規作成します（メモ帳やテキストエディタでOK）。上のテンプレートをコピー＆ペーストして、【 】部分を書き換えて保存します。</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-num">4</div>
+                    <div class="step-body">
+                        <h4>Claude Codeを起動して動作確認</h4>
+                        <p>ターミナルで作業フォルダに移動し（<code>cd ~/Documents/npo-work</code>）、<code>claude</code> と入力して起動します。「うちの団体のことを説明して」と聞いてみて、CLAUDE.mdに書いた内容を認識しているか確認しましょう。</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-num">5</div>
+                    <div class="step-body">
+                        <h4>実際に使ってみる</h4>
+                        <p>「いつもの報告書フォーマットで、今月の活動をまとめて」など、短い指示だけで書類を生成できるようになります。最初の数回で気になる点があれば、CLAUDE.mdに追記・修正しながら育てていきましょう🌱</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 5: FAQ -->
+        <div class="sec" id="faq">
+            <div class="sec-title">❓ よくある質問</div>
+            <div class="faq-list">
+                <div class="faq-item">
+                    <div class="faq-q">CLAUDE.mdに書いた情報はAnthropicに送られますか？</div>
+                    <div class="faq-a">Claude Codeを使う際のやりとりは通常のAPI通信に含まれますが、CLAUDE.mdの内容が特別に収集・公開されることはありません。とはいえ、パスワードや個人情報（氏名・住所・電話番号）は絶対に書かないようにしましょう。</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-q">複数のフォルダで別々の設定を使いたい場合は？</div>
+                    <div class="faq-a">各フォルダにそれぞれ CLAUDE.md を置けばOKです。例えば「助成金申請用フォルダ」「広報用フォルダ」で別々の設定を持たせることができます。Claude Codeは起動したフォルダのCLAUDE.mdだけを読み込みます。</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-q">ChatGPTにも同じことができますか？</div>
+                    <div class="faq-a">ChatGPTには「カスタム指示」という類似機能があります（設定画面から設定可能）。CLAUDE.mdはClaude Code専用ですが、アイデア自体（よく使うルールを事前登録する）はChatGPTでも応用できます。</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-q">設定が効いているか確かめる方法は？</div>
+                    <div class="faq-a">Claude Codeを起動後、「あなたが把握している私の団体のルールを教えて」と聞いてみましょう。CLAUDE.mdに書いた内容を正確に答えてくれれば設定成功です。答えが不完全な場合は、CLAUDE.mdの記述を見直してみてください。</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 6: 注意点 -->
+        <div class="sec" id="warning">
+            <div class="sec-title">⚠️ 注意点</div>
+            <div class="warning-card">
+                <h4>⚠️ CLAUDE.mdに書いてはいけないもの</h4>
+                <ul>
+                    <li>パスワード・APIキーなどの認証情報</li>
+                    <li>クライアント・受益者の氏名・住所・電話番号などの個人情報</li>
+                    <li>契約金額・給与など外部に出してはいけない財務情報</li>
+                    <li>「何でも言うことを聞いて」など、AIの安全性設定を無効化しようとする指示</li>
+                </ul>
+            </div>
+            <div style="margin-top:14px; background:#f0fafa; border-radius:8px; padding:14px 16px; font-size:0.88rem; color:#444;">
+                💡 <strong>ポイント</strong>：CLAUDE.mdは「AIへの取扱説明書」です。組織の文化・ルール・よく使う形式を書くのに最適です。秘密情報ではなく「AIに覚えておいてほしい作業ルール」だけを記録する、と覚えておきましょう。
+            </div>
+        </div>
+
+        <!-- Back banner -->
+        <div class="back-banner" id="back">
+            <a href="2026-04-08_claude-code_yoor.html">← 投稿文ページに戻る</a>
+        </div>
+
+    </div>
+
+    <script>
+        function copyCode(btn) {
+            const pre = btn.previousElementSibling;
+            const text = pre.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                btn.textContent = '✅ コピー済み';
+                setTimeout(() => { btn.textContent = '📋 コピー'; }, 2500);
+            }).catch(() => {
+                btn.textContent = '❌ 失敗';
+                setTimeout(() => { btn.textContent = '📋 コピー'; }, 2500);
+            });
+        }
+    </script>
+</body>
+</html>

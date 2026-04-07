@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🛠️ Claude Code入門Tips — CLAUDE.mdで毎回の指示をゼロに！ | PathLink</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #f5f7f8; color: #333; line-height: 1.7; }
+
+        .site-header { background: #fff; border-top: 4px solid #3DBFBE; padding: 12px 20px; display: flex; align-items: center; gap: 8px; }
+        .site-header .logo { font-size: 1.1rem; font-weight: 700; color: #3DBFBE; }
+
+        .card { max-width: 640px; margin: 24px auto 40px; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 16px rgba(0,0,0,0.09); }
+
+        .card-header { background: linear-gradient(135deg, #3DBFBE 0%, #2A9D8E 100%); padding: 28px 24px; color: #fff; }
+        .type-badge { background: rgba(255,255,255,0.25); border-radius: 20px; padding: 4px 14px; font-size: 0.8rem; display: inline-block; margin-bottom: 10px; }
+        .card-header h1 { font-size: 1.25rem; line-height: 1.5; margin-bottom: 8px; }
+        .card-header .date { font-size: 0.82rem; opacity: 0.85; }
+
+        .section { padding: 22px 24px; border-bottom: 1px solid #f0f0f0; }
+        .section:last-of-type { border-bottom: none; }
+
+        .hook { background: #f0fafa; padding: 16px 18px; border-left: 4px solid #3DBFBE; border-radius: 0 8px 8px 0; font-size: 1rem; margin-bottom: 14px; }
+
+        .sub-text { font-size: 0.95rem; color: #444; }
+
+        .section-label { font-weight: 700; font-size: 0.95rem; margin-bottom: 12px; color: #222; }
+
+        .usecase-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+        .usecase-list li { background: #f9fafb; border-radius: 8px; padding: 12px 16px; display: flex; align-items: flex-start; gap: 10px; font-size: 0.93rem; }
+        .usecase-list li .em { font-size: 1.2rem; flex-shrink: 0; margin-top: 1px; }
+
+        .warning-box { background: #fff8e1; border-left: 4px solid #ffc107; padding: 13px 16px; border-radius: 0 8px 8px 0; font-size: 0.9rem; }
+        .warning-box strong { color: #b8860b; }
+
+        .cta-section { text-align: center; padding: 28px 24px; }
+        .cta-note { font-size: 0.93rem; color: #555; margin-bottom: 16px; }
+        .cta-btn { display: inline-block; background: #3DBFBE; color: #fff !important; padding: 14px 36px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 1rem; transition: background 0.2s; }
+        .cta-btn:hover { background: #2A9D8E; }
+
+        .next-preview { background: #f0fafa; padding: 16px 24px; text-align: center; font-size: 0.88rem; color: #555; }
+        .next-preview strong { color: #2A9D8E; }
+
+        @media (max-width: 480px) {
+            .card { margin: 16px 12px 32px; }
+            .card-header { padding: 22px 18px; }
+            .section { padding: 18px; }
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <span>🔗</span>
+        <span class="logo">PathLink Community</span>
+    </header>
+
+    <div class="card">
+        <div class="card-header">
+            <div class="type-badge">🛠️ Claude Code入門Tips</div>
+            <h1>CLAUDE.mdで毎回の指示をゼロに！<br>Claude Codeをあなたの専属AIアシスタントに</h1>
+            <div class="date">2026年4月8日（水曜）</div>
+        </div>
+
+        <div class="section">
+            <div class="hook">毎回AIに「うちはNPOで、親しみやすい文体で書いて」って説明するの、地味に面倒だな…と思ったことありませんか？😣</div>
+            <p class="sub-text">実は一度だけ設定ファイル（CLAUDE.md）を書いておくと、以降はAIが自動的に組織のルールを覚えてくれるんです✨ 今日はその設定方法をご紹介します🛠️</p>
+        </div>
+
+        <div class="section">
+            <div class="section-label">こんな場面で使えます！</div>
+            <ul class="usecase-list">
+                <li>
+                    <span class="em">📄</span>
+                    <span>毎回「うちはNPOで〜」と説明しなくてOK！ AIが最初から組織の文脈を理解して回答してくれます</span>
+                </li>
+                <li>
+                    <span class="em">📧</span>
+                    <span>メールや報告書の書き方ルール（敬語の使い方・字数制限など）を一度登録すれば、ずっと守ってくれます</span>
+                </li>
+                <li>
+                    <span class="em">📊</span>
+                    <span>よく使う書類のフォーマットをAIに覚えさせて、「いつもの形式で」のひとことで生成可能に</span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <div class="warning-box">⚠️ <strong>ひとこと注意</strong>：CLAUDE.mdはClaude Codeだけが読む設定ファイルで、外部には公開されません🔒 ただし、パスワードや個人情報は書かないようにしましょう。</div>
+        </div>
+
+        <div class="cta-section">
+            <p class="cta-note">詳しい設定手順とコピペ用テンプレートはこちら👇</p>
+            <a href="2026-04-08_claude-code_detail.html" class="cta-btn">設定手順・テンプレートを見る →</a>
+        </div>
+
+        <div class="next-preview">
+            次回（木曜）：📚 AI基礎知識 — <strong>ハルシネーションを見抜く3つのポイント</strong>
+        </div>
+    </div>
+</body>
+</html>
