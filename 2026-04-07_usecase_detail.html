@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>【詳細】助成金申請書の下書きをAIで効率化 | PathLink</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif;
+      background: #f5f7f8;
+      color: #333;
+      line-height: 1.75;
+    }
+    /* sticky ヘッダー */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: #fff;
+      border-top: 4px solid #3DBFBE;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    }
+    .site-header .logo { font-size: 1rem; font-weight: 700; color: #3DBFBE; }
+    .back-link {
+      font-size: 0.82rem;
+      color: #3DBFBE;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .back-link:hover { text-decoration: underline; }
+    /* Hero */
+    .hero {
+      background: linear-gradient(135deg, #3DBFBE 0%, #1d8f8e 100%);
+      color: #fff;
+      padding: 48px 24px 40px;
+      text-align: center;
+    }
+    .hero .type-badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.22);
+      border-radius: 20px;
+      font-size: 0.78rem;
+      padding: 4px 14px;
+      margin-bottom: 14px;
+      letter-spacing: 0.06em;
+    }
+    .hero h1 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      line-height: 1.35;
+      margin-bottom: 10px;
+    }
+    .hero .meta { font-size: 0.82rem; opacity: 0.82; }
+    /* コンテナ */
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 16px 60px;
+    }
+    /* TOC */
+    .toc {
+      background: #fff;
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin: 28px 0;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+    .toc h2 {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 10px;
+    }
+    .toc ol {
+      padding-left: 20px;
+    }
+    .toc ol li {
+      margin-bottom: 5px;
+    }
+    .toc a {
+      color: #3DBFBE;
+      text-decoration: none;
+      font-size: 0.92rem;
+    }
+    .toc a:hover { text-decoration: underline; }
+    /* セクション共通 */
+    .section {
+      background: #fff;
+      border-radius: 16px;
+      padding: 28px;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #222;
+      margin-bottom: 18px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #e8f8f8;
+    }
+    .section-title .icon {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, #3DBFBE, #2aa3a2);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    /* Yoor投稿文再掲 */
+    .yoor-repost {
+      background: #f0fafa;
+      border: 1.5px solid #b2e8e8;
+      border-radius: 12px;
+      padding: 18px 20px;
+      font-size: 0.93rem;
+      white-space: pre-line;
+    }
+    /* グリッドカード */
+    .grid-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+    }
+    .grid-card {
+      background: #f0fafa;
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+    }
+    .grid-card .gc-icon { font-size: 1.8rem; margin-bottom: 8px; }
+    .grid-card .gc-label { font-size: 0.85rem; font-weight: 600; color: #2a7a7a; }
+    /* コードブロック */
+    .code-block-wrap {
+      position: relative;
+      margin-bottom: 8px;
+    }
+    .code-block {
+      background: #1e2a35;
+      color: #e6f4f4;
+      border-radius: 10px;
+      padding: 20px 20px 20px 20px;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 0.88rem;
+      line-height: 1.7;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .code-block .var { color: #f4b942; font-weight: 700; }
+    .code-block .comment { color: #7ec8c8; }
+    .copy-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #3DBFBE;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 5px 12px;
+      font-size: 0.78rem;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.15s;
+    }
+    .copy-btn:hover { background: #2aa3a2; }
+    .copy-btn.copied { background: #4caf82; }
+    /* アノテーションカード */
+    .annotation-cards { display: flex; flex-direction: column; gap: 12px; }
+    .annotation-card {
+      border-left: 4px solid #3DBFBE;
+      background: #f8fdfd;
+      border-radius: 0 10px 10px 0;
+      padding: 14px 16px;
+    }
+    .annotation-card .ann-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #3DBFBE;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 4px;
+    }
+    .annotation-card .ann-text { font-size: 0.93rem; }
+    /* ステッパー */
+    .stepper { display: flex; flex-direction: column; gap: 0; }
+    .step-item {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+    .step-line {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .step-num {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, #3DBFBE, #2aa3a2);
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+    .step-connector {
+      width: 2px;
+      flex: 1;
+      min-height: 20px;
+      background: #c8eaea;
+      margin: 2px 0;
+    }
+    .step-content {
+      padding-bottom: 20px;
+      flex: 1;
+    }
+    .step-content h3 {
+      font-size: 0.97rem;
+      font-weight: 700;
+      color: #2a7a7a;
+      margin-bottom: 5px;
+    }
+    .step-content p { font-size: 0.91rem; color: #555; }
+    /* テーブル */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+    .data-table th {
+      background: #3DBFBE;
+      color: #fff;
+      padding: 10px 14px;
+      text-align: left;
+      font-weight: 600;
+    }
+    .data-table td {
+      padding: 9px 14px;
+      border-bottom: 1px solid #e0f2f2;
+    }
+    .data-table tr:nth-child(even) td { background: #f0fafa; }
+    /* 警告カード */
+    .warning-card {
+      background: #fff8f0;
+      border: 1.5px solid #ffd8a8;
+      border-radius: 12px;
+      padding: 16px 18px;
+    }
+    .warning-card .w-title {
+      font-weight: 700;
+      color: #e07a00;
+      margin-bottom: 8px;
+    }
+    .warning-card ul {
+      padding-left: 18px;
+    }
+    .warning-card ul li {
+      font-size: 0.9rem;
+      color: #7a4500;
+      margin-bottom: 5px;
+    }
+    /* 戻るバナー */
+    .back-banner {
+      text-align: center;
+      margin-top: 32px;
+    }
+    .back-banner a {
+      display: inline-block;
+      background: #fff;
+      border: 2px solid #3DBFBE;
+      color: #3DBFBE;
+      text-decoration: none;
+      padding: 13px 30px;
+      border-radius: 50px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      transition: background 0.15s, color 0.15s;
+    }
+    .back-banner a:hover {
+      background: #3DBFBE;
+      color: #fff;
+    }
+    .footer {
+      text-align: center;
+      font-size: 0.75rem;
+      color: #aaa;
+      margin-top: 24px;
+    }
+  </style>
+</head>
+<body>
+  <!-- sticky ヘッダー -->
+  <header class="site-header">
+    <div class="logo">PathLink</div>
+    <a class="back-link" href="2026-04-07_usecase_yoor.html">← 投稿文に戻る</a>
+  </header>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="type-badge">💡 NPO活用事例 ｜ 火曜日</div>
+    <h1>助成金申請書の下書きを<br>AIで10倍速に！</h1>
+    <div class="meta">2026年4月7日（火）｜ PathLink NPO × AI コミュニティ</div>
+  </div>
+
+  <div class="container">
+    <!-- 目次 -->
+    <div class="toc">
+      <h2>目次</h2>
+      <ol>
+        <li><a href="#yoor">Yoor投稿文（再掲）</a></li>
+        <li><a href="#background">状況・課題の背景</a></li>
+        <li><a href="#prompt">AIへの指示・プロンプト</a></li>
+        <li><a href="#result">得られた成果</a></li>
+        <li><a href="#steps">すぐ試せる手順（3ステップ）</a></li>
+        <li><a href="#usecases">どんなデータ・場面に使える？</a></li>
+        <li><a href="#warnings">注意点</a></li>
+      </ol>
+    </div>
+
+    <!-- Section 1: Yoor投稿文再掲 -->
+    <div class="section" id="yoor">
+      <div class="section-title">
+        <div class="icon">📢</div>
+        <span>Yoor投稿文（再掲）</span>
+      </div>
+      <div class="yoor-repost">助成金の申請書、毎回ゼロから書いていませんか？😣
+
+昨年度の事業報告書があれば、AIを使って今年の申請書の下書きを一気に作れますよ！✨
+
+使える場面はこんなとき：
+📝 複数の助成金に合わせて申請文をリライトしたいとき
+🔄 事業内容の説明文を読みやすく整えたいとき
+📊 成果指標や効果測定の文章を作りたいとき
+
+ひとこと注意：AIが生成した内容は、必ず担当者が事実確認・修正してから提出してくださいね。</div>
+    </div>
+
+    <!-- Section 2: 背景 -->
+    <div class="section" id="background">
+      <div class="section-title">
+        <div class="icon">🔍</div>
+        <span>状況・課題の背景</span>
+      </div>
+      <p style="margin-bottom:14px;">あるNPO法人の事務局担当者（Aさん）は、毎年5〜8件の助成金申請を担当しています。助成金ごとに書式や文字数制限が異なり、昨年書いた申請書をそのままコピーすることもできません。</p>
+      <p style="margin-bottom:14px;">特に困っているのが「事業概要」と「期待される成果」の欄。活動内容は同じでも、助成財団ごとに「社会課題への対応」を軸に書くのか「受益者へのインパクト」を軸に書くのか、微妙に変えなければなりません。</p>
+      <p>Aさんは今回、<strong>昨年度の事業報告書（箇条書きのメモ）をAIに渡して、助成金申請書の下書きを自動生成する</strong>ことにチャレンジしました。</p>
+    </div>
+
+    <!-- Section 3: プロンプト -->
+    <div class="section" id="prompt">
+      <div class="section-title">
+        <div class="icon">💬</div>
+        <span>AIへの指示・プロンプト（コピペ用）</span>
+      </div>
+      <div class="code-block-wrap">
+        <button class="copy-btn" onclick="copyPrompt(this)">📋 コピー</button>
+        <div class="code-block" id="prompt-text">あなたはNPO法人の助成金申請書ライターです。
+以下の情報をもとに、助成金申請書の「事業概要」と「期待される成果」の下書きを作成してください。
+
+<span class="comment"># 入力情報</span>
+【助成財団名・助成プログラム名】
+<span class="var">【例：〇〇財団 地域コミュニティ支援助成】</span>
+
+【昨年度の事業報告（箇条書きOK）】
+<span class="var">【例：・子ども食堂を月2回開催・延べ参加者120名・地域ボランティア8名が運営支援…】</span>
+
+【今年度に変更・追加する点】
+<span class="var">【例：・開催頻度を月3回に増加・フードパントリーを新設予定】</span>
+
+【文字数制限】
+<span class="var">【例：事業概要300字以内、期待される成果200字以内】</span>
+
+<span class="comment"># 出力形式</span>
+以下の形式で出力してください：
+
+■ 事業概要（〇〇字以内）
+[ここに文章]
+
+■ 期待される成果（〇〇字以内）
+[ここに文章]
+
+※ 助成財団の趣旨・ミッションに沿った表現を使ってください。
+※ 数値（参加者数・開催回数）は具体的に記載してください。</div>
+      </div>
+      <p style="font-size:0.82rem; color:#888; margin-top:6px;">※ 【 】の中の黄色い部分があなたが入力する変数箇所です</p>
+    </div>
+
+    <!-- Section 4: プロンプト解説 -->
+    <div class="section">
+      <div class="section-title">
+        <div class="icon">💡</div>
+        <span>プロンプトの意図・解説</span>
+      </div>
+      <div class="annotation-cards">
+        <div class="annotation-card">
+          <div class="ann-label">役割設定</div>
+          <div class="ann-text">「NPO法人の助成金申請書ライターです」と役割を与えることで、AIが助成金申請の文体・表現スタイルに合わせた出力をしてくれます。✨</div>
+        </div>
+        <div class="annotation-card">
+          <div class="ann-label">助成財団名を明示する理由</div>
+          <div class="ann-text">助成財団によって重視するポイント（地域課題・当事者参加・持続可能性など）が異なります。財団名を入れることで、AIがその傾向に合わせた表現を選んでくれることがあります。📝</div>
+        </div>
+        <div class="annotation-card">
+          <div class="ann-label">箇条書きで渡してOKな理由</div>
+          <div class="ann-text">AIは箇条書きのメモからでも文章を生成できます。まずは「とにかく情報を詰め込む」のがコツ。きれいに書こうとしなくて大丈夫です！🙆</div>
+        </div>
+        <div class="annotation-card">
+          <div class="ann-label">文字数制限を伝える</div>
+          <div class="ann-text">文字数制限を明示することで、AIが自動的に制限内に収まる文章を生成します。「〇〇字以内で」と指定するのが重要です。📏</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 5: 使い方3ステップ -->
+    <div class="section" id="steps">
+      <div class="section-title">
+        <div class="icon">🚀</div>
+        <span>すぐ試せる手順（3ステップ）</span>
+      </div>
+      <div class="stepper">
+        <div class="step-item">
+          <div class="step-line">
+            <div class="step-num">1</div>
+            <div class="step-connector"></div>
+          </div>
+          <div class="step-content">
+            <h3>昨年度の事業報告を用意する</h3>
+            <p>箇条書きのメモでも、報告書の一部でもOKです。「何をやったか・何人参加したか・どんな変化があったか」がわかれば十分です。📋</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-line">
+            <div class="step-num">2</div>
+            <div class="step-connector"></div>
+          </div>
+          <div class="step-content">
+            <h3>プロンプトの【 】部分を埋めて貼り付ける</h3>
+            <p>上のプロンプトをコピーして、ChatGPT（またはClaude）に貼り付けます。【 】の部分を自分の情報に書き換えてから送信してください。✏️</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-line">
+            <div class="step-num">3</div>
+          </div>
+          <div class="step-content">
+            <h3>出力をベースに担当者が仕上げる</h3>
+            <p>AIの出力はあくまで「下書き」です。事実と異なる部分を修正し、団体の言葉・温度感に合わせて仕上げましょう。最終確認は必ず人の目で！👀</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 6: 使えるデータ・場面 -->
+    <div class="section" id="usecases">
+      <div class="section-title">
+        <div class="icon">📊</div>
+        <span>どんなデータ・場面に使える？</span>
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>場面</th>
+            <th>AIに渡すもの</th>
+            <th>生成してもらうもの</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>助成金申請</td>
+            <td>昨年度事業報告・今年度計画</td>
+            <td>事業概要・期待成果の文章</td>
+          </tr>
+          <tr>
+            <td>寄付者向けレポート</td>
+            <td>活動記録・参加者数</td>
+            <td>読みやすい活動紹介文</td>
+          </tr>
+          <tr>
+            <td>行政報告書</td>
+            <td>実績一覧（箇条書き）</td>
+            <td>成果を強調した報告文</td>
+          </tr>
+          <tr>
+            <td>ウェブサイト更新</td>
+            <td>事業内容メモ</td>
+            <td>わかりやすい説明文</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Section 7: 注意点 -->
+    <div class="section" id="warnings">
+      <div class="section-title">
+        <div class="icon">⚠️</div>
+        <span>注意点・よくある失敗</span>
+      </div>
+      <div class="warning-card">
+        <div class="w-title">⚠️ 必ずチェックしてください</div>
+        <ul>
+          <li>AIは「それらしい数字」を作ることがあります（ハルシネーション）。参加者数・金額などの数値は必ず元データと照合してください。</li>
+          <li>助成財団の最新の募集要項を確認し、求められている表現・キーワードと合致しているかチェックしましょう。</li>
+          <li>個人情報（支援対象者の氏名・住所など）はAIに入力しないでください。</li>
+          <li>AIが生成した文章はあくまで「下書き」。団体の実情・温度感と合っているか、最終的には担当者が責任を持って確認・修正してください。</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 戻るバナー -->
+    <div class="back-banner">
+      <a href="2026-04-07_usecase_yoor.html">← 投稿文ページに戻る</a>
+    </div>
+  </div>
+
+  <div class="footer">© 2026 PathLink — NPO × AI コミュニティ</div>
+
+  <script>
+    function copyPrompt(btn) {
+      const codeEl = document.getElementById('prompt-text');
+      const text = codeEl.innerText || codeEl.textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        btn.textContent = '✅ コピー済み';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = '📋 コピー';
+          btn.classList.remove('copied');
+        }, 2000);
+      });
+    }
+  </script>
+</body>
+</html>

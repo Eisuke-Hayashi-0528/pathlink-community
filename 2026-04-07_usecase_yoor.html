@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>💡 NPO活用事例 — 助成金申請書の下書きをAIで効率化 | PathLink</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif;
+      background: #f5f7f8;
+      color: #333;
+      line-height: 1.7;
+    }
+    /* ヘッダー */
+    .site-header {
+      background: #fff;
+      border-top: 4px solid #3DBFBE;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    }
+    .site-header .logo {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #3DBFBE;
+      letter-spacing: 0.05em;
+    }
+    .site-header .tagline {
+      font-size: 0.75rem;
+      color: #888;
+    }
+    /* メインカード */
+    .container {
+      max-width: 680px;
+      margin: 28px auto;
+      padding: 0 16px 40px;
+    }
+    /* カードヘッダー */
+    .card-header {
+      background: linear-gradient(135deg, #3DBFBE 0%, #2aa3a2 100%);
+      color: #fff;
+      border-radius: 16px 16px 0 0;
+      padding: 28px 28px 22px;
+    }
+    .card-header .type-badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.25);
+      border-radius: 20px;
+      font-size: 0.75rem;
+      padding: 3px 12px;
+      margin-bottom: 10px;
+      letter-spacing: 0.05em;
+    }
+    .card-header h1 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      line-height: 1.4;
+      margin-bottom: 8px;
+    }
+    .card-header .meta {
+      font-size: 0.8rem;
+      opacity: 0.85;
+    }
+    /* カード本体 */
+    .card-body {
+      background: #fff;
+      border-radius: 0 0 16px 16px;
+      padding: 28px;
+      box-shadow: 0 4px 20px rgba(61,191,190,0.1);
+    }
+    /* フックセクション */
+    .hook-section {
+      background: #fef9ec;
+      border-left: 4px solid #f4b942;
+      border-radius: 0 8px 8px 0;
+      padding: 16px 18px;
+      margin-bottom: 24px;
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #5a4200;
+    }
+    /* 使える場面 */
+    .scene-section h2 {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 12px;
+    }
+    .scene-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+    .scene-list li {
+      background: #f0fafa;
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .scene-list li .emoji { flex-shrink: 0; font-size: 1.1rem; }
+    /* 注意点 */
+    .note-section {
+      background: #fff8f0;
+      border: 1px solid #ffd8a8;
+      border-radius: 10px;
+      padding: 14px 16px;
+      font-size: 0.9rem;
+      color: #7a4500;
+      margin-bottom: 28px;
+    }
+    .note-section strong { color: #e07a00; }
+    /* CTAボタン */
+    .cta-wrap {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .cta-btn {
+      display: inline-block;
+      background: linear-gradient(135deg, #3DBFBE, #2aa3a2);
+      color: #fff;
+      text-decoration: none;
+      padding: 15px 32px;
+      border-radius: 50px;
+      font-size: 1rem;
+      font-weight: 700;
+      box-shadow: 0 4px 15px rgba(61,191,190,0.35);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .cta-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(61,191,190,0.45);
+    }
+    /* 次回予告 */
+    .next-banner {
+      background: linear-gradient(135deg, #2d3a4a, #3d4f62);
+      color: #fff;
+      border-radius: 12px;
+      padding: 16px 20px;
+      font-size: 0.9rem;
+    }
+    .next-banner .label {
+      font-size: 0.72rem;
+      opacity: 0.7;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 5px;
+    }
+    .next-banner .next-title {
+      font-weight: 700;
+      font-size: 1rem;
+    }
+    /* フッター */
+    .footer {
+      text-align: center;
+      font-size: 0.75rem;
+      color: #aaa;
+      margin-top: 32px;
+    }
+  </style>
+</head>
+<body>
+  <!-- サイトヘッダー -->
+  <header class="site-header">
+    <div>
+      <div class="logo">PathLink</div>
+      <div class="tagline">NPO × AI コミュニティ</div>
+    </div>
+  </header>
+
+  <div class="container">
+    <!-- カードヘッダー -->
+    <div class="card-header">
+      <div class="type-badge">💡 NPO活用事例 ｜ 火曜日</div>
+      <h1>助成金申請書の下書きを<br>AIで10倍速に！</h1>
+      <div class="meta">2026年4月7日（火）</div>
+    </div>
+
+    <!-- カード本体 -->
+    <div class="card-body">
+      <!-- フック -->
+      <div class="hook-section">
+        助成金の申請書、毎回ゼロから書いていませんか？😣
+      </div>
+
+      <!-- 説明文 -->
+      <p style="margin-bottom:20px; font-size:0.97rem;">
+        昨年度の事業報告書があれば、AIを使って今年の申請書の下書きを一気に作れますよ！✨<br>
+        実際の活用シーンをもとに、すぐ試せるプロンプトもご紹介しています。
+      </p>
+
+      <!-- 使える場面 -->
+      <div class="scene-section">
+        <h2>使える場面はこんなとき</h2>
+        <ul class="scene-list">
+          <li><span class="emoji">📝</span><span>複数の助成金に合わせて申請文をリライトしたいとき</span></li>
+          <li><span class="emoji">🔄</span><span>事業内容の説明文をわかりやすく整えたいとき</span></li>
+          <li><span class="emoji">📊</span><span>成果指標や効果測定の文章を作りたいとき</span></li>
+        </ul>
+      </div>
+
+      <!-- 注意点 -->
+      <div class="note-section">
+        <strong>⚠️ ひとこと注意：</strong>AIが生成した内容は、必ず担当者が事実確認・修正してから提出してくださいね。
+      </div>
+
+      <!-- CTAボタン -->
+      <div class="cta-wrap">
+        <a class="cta-btn" href="2026-04-07_usecase_detail.html">
+          詳しいプロンプトと使い方はこちら 👇
+        </a>
+      </div>
+
+      <!-- 次回予告 -->
+      <div class="next-banner">
+        <div class="label">Next</div>
+        <div class="next-title">次回（水曜）：🛠️ Claude Code入門Tips — Google DriveとClaude Codeを連携させよう</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">© 2026 PathLink — NPO × AI コミュニティ</div>
+</body>
+</html>
