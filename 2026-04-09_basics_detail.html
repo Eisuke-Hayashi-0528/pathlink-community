@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>📚 個人情報とAI：NPO職員が知っておきたい安全な使い方【詳細】— PathLink</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif;
+      background: #f5f7f8;
+      color: #2d3748;
+      line-height: 1.75;
+    }
+
+    /* Sticky Header */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: #fff;
+      border-top: 4px solid #3DBFBE;
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.1);
+    }
+    .site-header .logo { font-size: 1.1rem; font-weight: 700; color: #3DBFBE; }
+    .back-link {
+      font-size: 0.82rem;
+      color: #3DBFBE;
+      text-decoration: none;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .back-link:hover { text-decoration: underline; }
+
+    /* Hero */
+    .hero {
+      background: linear-gradient(135deg, #3DBFBE 0%, #1a8a89 100%);
+      color: #fff;
+      padding: 48px 24px 40px;
+      text-align: center;
+    }
+    .hero .type-badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.22);
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 5px 14px;
+      letter-spacing: 0.06em;
+      margin-bottom: 16px;
+    }
+    .hero h1 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      line-height: 1.4;
+      margin-bottom: 12px;
+    }
+    .hero .subtitle {
+      font-size: 0.9rem;
+      opacity: 0.88;
+      margin-bottom: 8px;
+    }
+    .hero .date { font-size: 0.78rem; opacity: 0.75; }
+
+    /* Container */
+    .container {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 32px 20px 60px;
+    }
+
+    /* TOC */
+    .toc {
+      background: #fff;
+      border: 1px solid #d1eded;
+      border-radius: 14px;
+      padding: 22px 26px;
+      margin-bottom: 36px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .toc h2 {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #3DBFBE;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 12px;
+    }
+    .toc ol {
+      padding-left: 18px;
+    }
+    .toc li {
+      font-size: 0.9rem;
+      margin-bottom: 6px;
+    }
+    .toc a { color: #2d6b6b; text-decoration: none; }
+    .toc a:hover { text-decoration: underline; }
+
+    /* Section cards */
+    .section-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 28px;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    }
+    .section-card .section-num {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #3DBFBE;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 6px;
+    }
+    .section-card h2 {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #1a3535;
+      margin-bottom: 18px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid #e2f4f4;
+    }
+
+    /* Yoor repost box */
+    .yoor-box {
+      background: #f0fafa;
+      border: 1px solid #b2e0e0;
+      border-radius: 12px;
+      padding: 20px;
+      font-size: 0.92rem;
+      white-space: pre-line;
+      color: #2d5a5a;
+      line-height: 1.8;
+    }
+
+    /* Why grid */
+    .why-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
+    }
+    .why-card {
+      background: linear-gradient(135deg, #f0fafa, #e8f7f7);
+      border: 1px solid #c0e8e8;
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+    }
+    .why-card .why-emoji { font-size: 1.8rem; margin-bottom: 8px; }
+    .why-card .why-title { font-size: 0.85rem; font-weight: 700; color: #1a4545; margin-bottom: 4px; }
+    .why-card .why-desc { font-size: 0.8rem; color: #4a7272; }
+
+    /* Body text */
+    .body-text { font-size: 0.93rem; color: #4a5568; margin-bottom: 16px; }
+    .body-text strong { color: #1a3535; }
+
+    /* Annotation cards */
+    .annotation-list { display: flex; flex-direction: column; gap: 14px; }
+    .annotation-card {
+      border-left: 4px solid #3DBFBE;
+      background: #f7fffe;
+      border-radius: 0 10px 10px 0;
+      padding: 14px 18px;
+    }
+    .annotation-card .anno-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #3DBFBE;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .annotation-card p { font-size: 0.9rem; color: #3d5a5a; }
+
+    /* Checklist */
+    .checklist { display: flex; flex-direction: column; gap: 10px; }
+    .check-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      background: #f9fffe;
+      border: 1px solid #c6efef;
+      border-radius: 10px;
+      padding: 13px 16px;
+      font-size: 0.9rem;
+    }
+    .check-box {
+      width: 22px; height: 22px;
+      border: 2px solid #3DBFBE;
+      border-radius: 5px;
+      flex-shrink: 0;
+      margin-top: 1px;
+      background: #fff;
+    }
+    .check-item.danger .check-box { border-color: #e53e3e; }
+    .check-item.danger { background: #fff5f5; border-color: #fed7d7; }
+    .check-item.danger .check-text { color: #742a2a; }
+    .check-text { flex: 1; color: #2d5a5a; line-height: 1.5; }
+    .check-text strong { color: #1a3535; }
+
+    /* Warning card */
+    .warning-card {
+      background: #fffbeb;
+      border: 1px solid #f6c900;
+      border-radius: 12px;
+      padding: 18px 20px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      margin-bottom: 14px;
+    }
+    .warning-card .warn-icon { font-size: 1.4rem; flex-shrink: 0; }
+    .warning-card .warn-body .warn-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #7d5a00;
+      margin-bottom: 4px;
+    }
+    .warning-card .warn-body p { font-size: 0.88rem; color: #7d5a00; }
+
+    /* Category table */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+    .data-table th {
+      background: #3DBFBE;
+      color: #fff;
+      padding: 10px 14px;
+      text-align: left;
+      font-weight: 700;
+    }
+    .data-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid #e2f4f4;
+    }
+    .data-table tr:nth-child(even) td { background: #f7fffe; }
+    .badge-ng {
+      display: inline-block;
+      background: #fed7d7;
+      color: #c53030;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 20px;
+    }
+    .badge-ok {
+      display: inline-block;
+      background: #c6f6d5;
+      color: #276749;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 20px;
+    }
+    .badge-caution {
+      display: inline-block;
+      background: #fefcbf;
+      color: #7d5a00;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 20px;
+    }
+
+    /* Back banner */
+    .back-banner {
+      background: linear-gradient(135deg, #3DBFBE, #2a9d9c);
+      border-radius: 14px;
+      padding: 22px 28px;
+      text-align: center;
+      margin-top: 8px;
+    }
+    .back-banner a {
+      color: #fff;
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .back-banner a:hover { text-decoration: underline; }
+    .back-banner .back-desc {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.8);
+      margin-top: 6px;
+    }
+
+    /* Footer */
+    .site-footer {
+      text-align: center;
+      padding: 24px 16px;
+      font-size: 0.78rem;
+      color: #a0aec0;
+    }
+
+    /* Utility */
+    .mt-8 { margin-top: 8px; }
+    .mt-16 { margin-top: 16px; }
+    .highlight-teal { color: #2a9d9c; font-weight: 700; }
+  </style>
+</head>
+<body>
+
+  <!-- Sticky Header -->
+  <header class="site-header">
+    <div class="logo">🔗 PathLink NPO AIコミュニティ</div>
+    <a class="back-link" href="2026-04-09_basics_yoor.html">← 投稿文に戻る</a>
+  </header>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="type-badge">📚 AI基礎知識｜木曜コンテンツ</div>
+    <h1>個人情報とAI<br>NPO職員が知っておきたい<br>安全な使い方</h1>
+    <div class="subtitle">AIを安心して使うための基礎知識とチェックリスト</div>
+    <div class="date">2026年4月9日（木）</div>
+  </div>
+
+  <div class="container">
+
+    <!-- TOC -->
+    <div class="toc">
+      <h2>📋 目次</h2>
+      <ol>
+        <li><a href="#yoor">Yoor投稿文（再掲）</a></li>
+        <li><a href="#why">なぜ今、NPOこそ知っておくべきか？</a></li>
+        <li><a href="#main">解説：AIに入れてはいけない情報とは？</a></li>
+        <li><a href="#table">情報の種類別 AIへの入力可否まとめ</a></li>
+        <li><a href="#checklist">今日からできる！安全利用チェックリスト</a></li>
+        <li><a href="#warnings">よくある失敗と注意点</a></li>
+      </ol>
+    </div>
+
+    <!-- Section 1: Yoor repost -->
+    <div class="section-card" id="yoor">
+      <div class="section-num">Section 01</div>
+      <h2>📋 Yoor投稿文（再掲）</h2>
+      <div class="yoor-box">「個人情報、うっかりAIに入れちゃいそう…😣」
+そんな不安、感じたことありませんか？
+
+今日は、NPO職員が知っておきたい「AIに入力してはいけない情報」と「安全な使い方のコツ」をご紹介します📚
+ちょっとした知識で、安心してAIを活用できるようになりますよ😊
+
+✅ こんな場面で役立ちます：
+📋 支援対象者の情報を整理・まとめたいとき
+📝 ボランティア名簿や会員リストを扱うとき
+💬 相談記録や事例のまとめ文に使いたいとき
+
+⚠️ 無料版のAIツールは、入力した内容がAIの学習に使われる場合があります。使う前に設定を確認しましょう！
+
+詳しい安全策と確認チェックリストはこちら👇
+
+次回（金曜）：📊 データ活用術 — アンケート結果を5分でグラフ化するプロンプト</div>
+    </div>
+
+    <!-- Section 2: Why -->
+    <div class="section-card" id="why">
+      <div class="section-num">Section 02</div>
+      <h2>🤔 なぜ今、NPOこそ知っておくべきか？</h2>
+      <p class="body-text">NPO法人は、支援対象者・会員・ボランティアなど、<strong>多くの個人情報</strong>を日常的に扱っています。AIツールが普及した今、「業務効率化のためにAIを使いたい！」という気持ちはよく分かります。でも、使い方を間違えると個人情報保護法違反や、信頼の失墜につながることも😰</p>
+      <div class="why-grid">
+        <div class="why-card">
+          <div class="why-emoji">🛡️</div>
+          <div class="why-title">法律上の責任</div>
+          <div class="why-desc">個人情報保護法では第三者提供に本人同意が必要。AIへの入力も「提供」にあたる可能性あり</div>
+        </div>
+        <div class="why-card">
+          <div class="why-emoji">🤝</div>
+          <div class="why-title">支援者・利用者との信頼</div>
+          <div class="why-desc">情報漏えいは団体への信頼を大きく損なう。NPOにとって信頼は最大の資産です</div>
+        </div>
+        <div class="why-card">
+          <div class="why-emoji">📱</div>
+          <div class="why-title">無料ツールのリスク</div>
+          <div class="why-desc">ChatGPT無料版などは設定によっては入力内容が学習データに使われる場合があります</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 3: Main explanation -->
+    <div class="section-card" id="main">
+      <div class="section-num">Section 03</div>
+      <h2>📖 解説：AIに入れてはいけない情報とは？</h2>
+
+      <p class="body-text">AIツールに入力した情報は、<strong>サービス提供会社のサーバーに送られます</strong>。無料版のAIツールの中には、入力内容をAIの改善（学習）に使用するものがあります。つまり、あなたが入力した情報が、将来的に他のユーザーへの回答に使われる可能性があるということです。</p>
+
+      <p class="body-text">特に以下の情報は、<strong class="highlight-teal">絶対にAIに入力しないでください❌</strong></p>
+
+      <div class="annotation-list mt-8">
+        <div class="annotation-card">
+          <div class="anno-title">🔴 要配慮個人情報（最高リスク）</div>
+          <p>病歴・障がいの情報・生活保護の受給状況・犯罪歴・宗教・政治的意見など。これらは個人情報保護法で特別に保護されており、AIへの入力は絶対に避けましょう。</p>
+        </div>
+        <div class="annotation-card">
+          <div class="anno-title">🟠 個人を特定できる情報（高リスク）</div>
+          <p>氏名＋住所の組み合わせ、電話番号、メールアドレス、マイナンバー、生年月日（単独でも組み合わせでも）。これらがセットになると個人が特定されます。</p>
+        </div>
+        <div class="annotation-card">
+          <div class="anno-title">🟡 文脈によっては危険な情報（注意）</div>
+          <p>「○○地区在住の高齢男性、要介護3」のような記述。氏名がなくても、組み合わせによっては個人が特定される「準個人情報」になる場合があります。</p>
+        </div>
+      </div>
+
+      <p class="body-text mt-16">では、AIには<strong class="highlight-teal">何を入力してよいのか？✅</strong></p>
+      <div class="annotation-list">
+        <div class="annotation-card">
+          <div class="anno-title">✅ 安全に使える入力</div>
+          <p>氏名・住所など個人を特定する情報を含まない一般的な文書。「〇〇という状況の支援者の方に向けたお知らせ文を書いてください」など、<strong>架空の設定・匿名化した情報</strong>で依頼するのがコツです。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 4: Table -->
+    <div class="section-card" id="table">
+      <div class="section-num">Section 04</div>
+      <h2>📊 情報の種類別 AIへの入力可否まとめ</h2>
+      <div style="overflow-x:auto;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>情報の種類</th>
+              <th>具体例</th>
+              <th>入力の可否</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>要配慮個人情報</td>
+              <td>病歴、障がい、生活保護状況</td>
+              <td><span class="badge-ng">NG ❌</span></td>
+            </tr>
+            <tr>
+              <td>個人を特定する情報</td>
+              <td>氏名＋住所、電話番号、マイナンバー</td>
+              <td><span class="badge-ng">NG ❌</span></td>
+            </tr>
+            <tr>
+              <td>準個人情報の組み合わせ</td>
+              <td>「○○地区・80代男性・要介護3」など</td>
+              <td><span class="badge-caution">要注意 ⚠️</span></td>
+            </tr>
+            <tr>
+              <td>匿名化・架空化した情報</td>
+              <td>「Aさん（50代・女性）の事例」</td>
+              <td><span class="badge-ok">OK ✅</span></td>
+            </tr>
+            <tr>
+              <td>一般的な業務文書</td>
+              <td>お知らせ文、議事録の清書、助成金申請書のドラフト</td>
+              <td><span class="badge-ok">OK ✅</span></td>
+            </tr>
+            <tr>
+              <td>組織内の機密情報</td>
+              <td>未公開の財務情報、内部の人事情報</td>
+              <td><span class="badge-ng">NG ❌</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Section 5: Checklist -->
+    <div class="section-card" id="checklist">
+      <div class="section-num">Section 05</div>
+      <h2>✅ 今日からできる！安全利用チェックリスト</h2>
+      <p class="body-text">AIを使う前に、以下の項目を確認する習慣をつけましょう🔍</p>
+
+      <div class="checklist mt-8">
+        <div class="check-item">
+          <div class="check-box"></div>
+          <div class="check-text"><strong>使っているAIツールの「学習オプトアウト」設定を確認した</strong><br>ChatGPTは設定→データコントロール→「会話履歴とトレーニング」をOFFにできます</div>
+        </div>
+        <div class="check-item">
+          <div class="check-box"></div>
+          <div class="check-text"><strong>入力文章に実名・住所・電話番号が含まれていないか確認した</strong><br>入力前に一度確認する癖をつけましょう</div>
+        </div>
+        <div class="check-item">
+          <div class="check-box"></div>
+          <div class="check-text"><strong>支援者の事例は「匿名化」してから入力している</strong><br>「Aさん（50代・女性）の事例として…」のように架空化すれば安全に使えます</div>
+        </div>
+        <div class="check-item">
+          <div class="check-box"></div>
+          <div class="check-text"><strong>組織として「AIツール利用ルール」を決めている、または話し合う予定がある</strong><br>個人の判断に任せず、組織全体でルールを作ることが大切です</div>
+        </div>
+        <div class="check-item danger">
+          <div class="check-box"></div>
+          <div class="check-text check-text danger"><strong>要配慮個人情報（病歴・障がい・生活保護など）を絶対に入力しない</strong><br>❌ これだけは絶対NG。組織のルールに明記しましょう</div>
+        </div>
+        <div class="check-item">
+          <div class="check-box"></div>
+          <div class="check-text"><strong>有料版（ChatGPT Plus、Claude Pro等）の利用を検討している</strong><br>有料版は学習への利用を拒否できる設定が充実しています</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 6: Warnings -->
+    <div class="section-card" id="warnings">
+      <div class="section-num">Section 06</div>
+      <h2>⚠️ よくある失敗と注意点</h2>
+
+      <div class="warning-card">
+        <span class="warn-icon">😱</span>
+        <div class="warn-body">
+          <div class="warn-title">失敗① 相談記録をそのままコピペして入力してしまった</div>
+          <p>「文章をきれいにしたい」と思って相談記録を丸ごと入力するのは危険です。必ず個人情報を取り除いてから使いましょう。</p>
+        </div>
+      </div>
+
+      <div class="warning-card">
+        <span class="warn-icon">🤔</span>
+        <div class="warn-body">
+          <div class="warn-title">失敗② 「AIが答えたから正しい」と思いこんでしまった</div>
+          <p>AIはハルシネーション（AIが事実と違うことを自信満々に答えてしまう現象）を起こすことがあります。重要な情報は必ず原典で確認しましょう。</p>
+        </div>
+      </div>
+
+      <div class="warning-card">
+        <span class="warn-icon">📵</span>
+        <div class="warn-body">
+          <div class="warn-title">失敗③ 組織のルールなしに各自が使い始めてしまった</div>
+          <p>「使ってはいけない」ではなく「こう使えば安全」というルールを組織で共有することが大切です。ぜひ次のミーティングで話し合ってみてください😊</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Back banner -->
+    <div class="back-banner">
+      <a href="2026-04-09_basics_yoor.html">← 投稿文ページに戻る</a>
+      <div class="back-desc">Yoorに投稿する短文テキストはこちらからコピーできます</div>
+    </div>
+
+  </div>
+
+  <footer class="site-footer">
+    © 2026 PathLink NPO AIコミュニティ | 林栄佑
+  </footer>
+
+</body>
+</html>
