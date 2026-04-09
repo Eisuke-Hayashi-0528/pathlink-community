@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>📚 AI基礎知識｜個人情報とAI — PathLink NPO AIコミュニティ</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif;
+      background: #f5f7f8;
+      color: #2d3748;
+      line-height: 1.7;
+    }
+
+    /* Header */
+    .site-header {
+      background: #fff;
+      border-top: 4px solid #3DBFBE;
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+    .site-header .logo {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #3DBFBE;
+      letter-spacing: 0.05em;
+    }
+    .site-header .tagline {
+      font-size: 0.78rem;
+      color: #718096;
+    }
+
+    /* Card container */
+    .container {
+      max-width: 640px;
+      margin: 32px auto;
+      padding: 0 16px 40px;
+    }
+
+    /* Card header */
+    .card-header {
+      background: linear-gradient(135deg, #3DBFBE 0%, #2a9d9c 100%);
+      border-radius: 16px 16px 0 0;
+      padding: 28px 28px 24px;
+      color: #fff;
+    }
+    .card-header .type-badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.25);
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 4px 12px;
+      letter-spacing: 0.06em;
+      margin-bottom: 12px;
+    }
+    .card-header .day-badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.18);
+      border-radius: 20px;
+      font-size: 0.72rem;
+      padding: 4px 10px;
+      margin-left: 8px;
+      margin-bottom: 12px;
+    }
+    .card-header h1 {
+      font-size: 1.35rem;
+      font-weight: 800;
+      line-height: 1.4;
+      margin-bottom: 8px;
+    }
+    .card-header .date {
+      font-size: 0.78rem;
+      opacity: 0.85;
+    }
+
+    /* Card body */
+    .card-body {
+      background: #fff;
+      border-radius: 0 0 16px 16px;
+      padding: 28px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    }
+
+    /* Hook */
+    .hook {
+      background: #f0fafa;
+      border-left: 4px solid #3DBFBE;
+      border-radius: 0 10px 10px 0;
+      padding: 16px 20px;
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #2d6b6b;
+      margin-bottom: 20px;
+    }
+
+    .intro-text {
+      font-size: 0.95rem;
+      color: #4a5568;
+      margin-bottom: 24px;
+    }
+
+    /* Use cases */
+    .usecase-label {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #3DBFBE;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 12px;
+    }
+    .usecase-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+    .usecase-item {
+      background: #f7fffe;
+      border: 1px solid #c6efef;
+      border-radius: 10px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 0.92rem;
+    }
+    .usecase-item .emoji {
+      font-size: 1.1rem;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* Warning */
+    .warning-box {
+      background: #fffbeb;
+      border: 1px solid #f6c900;
+      border-radius: 10px;
+      padding: 14px 18px;
+      font-size: 0.88rem;
+      color: #7d5a00;
+      display: flex;
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+    .warning-box .warn-icon { font-size: 1.1rem; flex-shrink: 0; }
+
+    /* CTA */
+    .cta-section {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .cta-label {
+      font-size: 0.85rem;
+      color: #718096;
+      margin-bottom: 10px;
+    }
+    .cta-btn {
+      display: inline-block;
+      background: linear-gradient(135deg, #3DBFBE, #2a9d9c);
+      color: #fff;
+      text-decoration: none;
+      font-size: 1rem;
+      font-weight: 700;
+      padding: 14px 28px;
+      border-radius: 50px;
+      box-shadow: 0 4px 12px rgba(61,191,190,0.35);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .cta-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(61,191,190,0.45); }
+
+    /* Next preview */
+    .next-preview {
+      background: linear-gradient(135deg, #f0fafa 0%, #e8f7f7 100%);
+      border: 1px solid #b2e0e0;
+      border-radius: 12px;
+      padding: 16px 20px;
+      font-size: 0.88rem;
+    }
+    .next-preview .next-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #3DBFBE;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 4px;
+    }
+    .next-preview .next-content {
+      font-weight: 600;
+      color: #2d6b6b;
+    }
+
+    /* Footer */
+    .site-footer {
+      text-align: center;
+      padding: 24px 16px;
+      font-size: 0.78rem;
+      color: #a0aec0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div>
+      <div class="logo">🔗 PathLink</div>
+      <div class="tagline">NPO AIコミュニティ</div>
+    </div>
+  </header>
+
+  <div class="container">
+
+    <!-- Card header -->
+    <div class="card-header">
+      <span class="type-badge">📚 AI基礎知識</span>
+      <span class="day-badge">木曜日</span>
+      <h1>個人情報とAI<br>NPO職員が知っておきたい<br>安全な使い方</h1>
+      <div class="date">2026年4月9日（木）</div>
+    </div>
+
+    <!-- Card body -->
+    <div class="card-body">
+
+      <!-- Hook -->
+      <div class="hook">
+        「個人情報、うっかりAIに入れちゃいそう…😣」<br>
+        そんな不安、感じたことありませんか？
+      </div>
+
+      <p class="intro-text">
+        今日は、NPO職員が知っておきたい「AIに入力してはいけない情報」と「安全な使い方のコツ」をご紹介します📚<br>
+        ちょっとした知識で、安心してAIを活用できるようになりますよ😊
+      </p>
+
+      <!-- Use cases -->
+      <div class="usecase-label">✅ こんな場面で役立ちます</div>
+      <div class="usecase-list">
+        <div class="usecase-item">
+          <span class="emoji">📋</span>
+          <span>支援対象者の情報を整理・まとめたいとき</span>
+        </div>
+        <div class="usecase-item">
+          <span class="emoji">📝</span>
+          <span>ボランティア名簿や会員リストを扱うとき</span>
+        </div>
+        <div class="usecase-item">
+          <span class="emoji">💬</span>
+          <span>相談記録や事例のまとめ文に使いたいとき</span>
+        </div>
+      </div>
+
+      <!-- Warning -->
+      <div class="warning-box">
+        <span class="warn-icon">⚠️</span>
+        <span>無料版のAIツールは、入力した内容がAIの学習に使われる場合があります。使う前に設定を確認しましょう！</span>
+      </div>
+
+      <!-- CTA -->
+      <div class="cta-section">
+        <div class="cta-label">詳しい安全策と確認チェックリストはこちら👇</div>
+        <a class="cta-btn" href="2026-04-09_basics_detail.html">
+          📖 詳しい解説・チェックリストを見る
+        </a>
+      </div>
+
+      <!-- Next preview -->
+      <div class="next-preview">
+        <div class="next-label">次回（金曜）のコンテンツ</div>
+        <div class="next-content">📊 データ活用術 — アンケート結果を5分でグラフ化するプロンプト</div>
+      </div>
+
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    © 2026 PathLink NPO AIコミュニティ
+  </footer>
+
+</body>
+</html>
