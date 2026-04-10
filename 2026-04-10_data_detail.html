@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>【詳細】参加者データ傾向分析 — プロンプト解説 | PathLink</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif;
+      background: #f5f7f8;
+      color: #333;
+      line-height: 1.75;
+    }
+
+    /* ── Header ── */
+    .header {
+      background: #fff;
+      border-bottom: 3px solid #3DBFBE;
+      padding: 14px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .logo { font-size: 22px; font-weight: 800; color: #3DBFBE; }
+    .back-link {
+      font-size: 13px;
+      color: #3DBFBE;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-weight: 600;
+    }
+    .back-link:hover { text-decoration: underline; }
+
+    /* ── Hero ── */
+    .hero {
+      background: linear-gradient(135deg, #3DBFBE 0%, #2eaeae 100%);
+      color: #fff;
+      padding: 40px 32px 36px;
+      text-align: center;
+    }
+    .hero-tag {
+      display: inline-block;
+      background: rgba(255,255,255,0.25);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 14px;
+      border-radius: 20px;
+      margin-bottom: 14px;
+      letter-spacing: 1px;
+    }
+    .hero-title {
+      font-size: 26px;
+      font-weight: 800;
+      line-height: 1.45;
+      margin-bottom: 10px;
+    }
+    .hero-sub {
+      font-size: 14px;
+      opacity: 0.88;
+    }
+
+    /* ── TOC ── */
+    .toc {
+      max-width: 760px;
+      margin: 32px auto 0;
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      padding: 22px 28px;
+    }
+    .toc-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: #3DBFBE;
+      letter-spacing: 1.5px;
+      margin-bottom: 12px;
+    }
+    .toc ol {
+      padding-left: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .toc a {
+      color: #3DBFBE;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .toc a:hover { text-decoration: underline; }
+
+    /* ── Content sections ── */
+    .section {
+      max-width: 760px;
+      margin: 28px auto 0;
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      padding: 28px 32px;
+    }
+    .section-label {
+      font-size: 11px;
+      font-weight: 800;
+      color: #3DBFBE;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .section-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: #222;
+      margin-bottom: 18px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid #e8f8f8;
+    }
+
+    /* ── Capability grid ── */
+    .cap-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 14px;
+    }
+    .cap-card {
+      background: #f0fafa;
+      border: 1px solid #c8e9e9;
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+    }
+    .cap-icon { font-size: 28px; margin-bottom: 8px; }
+    .cap-text { font-size: 13px; font-weight: 600; color: #2a6e6e; line-height: 1.5; }
+
+    /* ── Prompt block ── */
+    .prompt-wrapper {
+      position: relative;
+      background: #1a1a2e;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .prompt-toolbar {
+      background: #16213e;
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .prompt-lang {
+      font-size: 11px;
+      color: #7ec8e3;
+      font-weight: 700;
+      font-family: monospace;
+    }
+    .copy-btn {
+      background: #3DBFBE;
+      color: #fff;
+      border: none;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 5px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .copy-btn:hover { background: #2eaeae; }
+    .prompt-code {
+      padding: 20px 22px;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 13.5px;
+      line-height: 1.9;
+      color: #e0e0e0;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .var { color: #ffd580; font-weight: 700; }
+    .comment { color: #6a9fb5; font-style: italic; }
+    .keyword { color: #c792ea; }
+
+    /* ── Annotation cards ── */
+    .anno-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .anno-card {
+      background: #f8fefe;
+      border-left: 4px solid #3DBFBE;
+      border-radius: 0 12px 12px 0;
+      padding: 14px 18px;
+    }
+    .anno-line {
+      font-size: 13px;
+      font-weight: 700;
+      font-family: monospace;
+      color: #2eaeae;
+      margin-bottom: 6px;
+      background: #e0f5f5;
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+    .anno-desc { font-size: 14px; color: #444; line-height: 1.7; }
+
+    /* ── Stepper ── */
+    .stepper {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .step {
+      display: flex;
+      gap: 18px;
+      position: relative;
+    }
+    .step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      left: 19px;
+      top: 40px;
+      bottom: 0;
+      width: 2px;
+      background: #d0eded;
+    }
+    .step-num {
+      width: 40px;
+      height: 40px;
+      background: #3DBFBE;
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+    .step-body {
+      padding: 8px 0 28px;
+      flex: 1;
+    }
+    .step-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+    .step-desc { font-size: 14px; color: #555; line-height: 1.7; }
+    .step-tip {
+      margin-top: 8px;
+      background: #f0fafa;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: #2a7a7a;
+    }
+
+    /* ── Data table ── */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    .data-table th {
+      background: #3DBFBE;
+      color: #fff;
+      padding: 10px 14px;
+      text-align: left;
+      font-weight: 700;
+    }
+    .data-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid #e5f5f5;
+    }
+    .data-table tr:nth-child(even) td { background: #f8fefe; }
+    .badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+    .badge-ok { background: #d0f0d0; color: #1a6a1a; }
+    .badge-ng { background: #fde8e8; color: #8a1a1a; }
+
+    /* ── Warning card ── */
+    .warn-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .warn-card {
+      background: #fffbee;
+      border: 1px solid #f5d96a;
+      border-radius: 10px;
+      padding: 14px 18px;
+      font-size: 14px;
+      color: #5a4800;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      line-height: 1.7;
+    }
+    .warn-icon { font-size: 18px; flex-shrink: 0; }
+
+    /* ── Back banner ── */
+    .back-banner {
+      max-width: 760px;
+      margin: 32px auto 48px;
+      text-align: center;
+    }
+    .back-banner a {
+      display: inline-block;
+      background: #fff;
+      border: 2px solid #3DBFBE;
+      color: #3DBFBE;
+      font-size: 15px;
+      font-weight: 800;
+      padding: 14px 40px;
+      border-radius: 50px;
+      text-decoration: none;
+      transition: background 0.15s, color 0.15s;
+    }
+    .back-banner a:hover {
+      background: #3DBFBE;
+      color: #fff;
+    }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 12px;
+      color: #bbb;
+    }
+
+    @media (max-width: 800px) {
+      .section { margin: 16px; padding: 20px; }
+      .toc { margin: 20px 16px 0; padding: 18px 20px; }
+      .hero { padding: 28px 20px; }
+      .header { padding: 12px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="logo">PathLink</div>
+    <a class="back-link" href="2026-04-10_data_yoor.html">← 投稿文に戻る</a>
+  </header>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-tag">📊 FRIDAY · データ活用術</div>
+    <div class="hero-title">参加者データの傾向、<br>AIで一瞬まとめる方法</div>
+    <div class="hero-sub">2026年4月10日（金）｜コピペ用プロンプト＋解説＋3ステップガイド</div>
+  </div>
+
+  <!-- TOC -->
+  <nav class="toc">
+    <div class="toc-title">📋 もくじ</div>
+    <ol>
+      <li><a href="#capabilities">このデータ活用でできること</a></li>
+      <li><a href="#prompt">コピペ用プロンプト</a></li>
+      <li><a href="#annotation">プロンプトの意図・解説</a></li>
+      <li><a href="#steps">使い方 3ステップ</a></li>
+      <li><a href="#table">どんなデータに使える？</a></li>
+      <li><a href="#warnings">注意点</a></li>
+    </ol>
+  </nav>
+
+  <!-- Section 1: Capabilities -->
+  <section class="section" id="capabilities">
+    <div class="section-label">SECTION 01</div>
+    <div class="section-title">🚀 このデータ活用でできること</div>
+    <div class="cap-grid">
+      <div class="cap-card">
+        <div class="cap-icon">📊</div>
+        <div class="cap-text">年齢層・性別・地域の<br>傾向を自動要約</div>
+      </div>
+      <div class="cap-card">
+        <div class="cap-icon">🔁</div>
+        <div class="cap-text">リピーター率や<br>初参加者の割合を把握</div>
+      </div>
+      <div class="cap-card">
+        <div class="cap-icon">📝</div>
+        <div class="cap-text">助成金・年次報告書に<br>使える文章を自動生成</div>
+      </div>
+      <div class="cap-card">
+        <div class="cap-icon">💡</div>
+        <div class="cap-text">データから見える<br>課題・提言まで出してくれる</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 2: Prompt -->
+  <section class="section" id="prompt">
+    <div class="section-label">SECTION 02</div>
+    <div class="section-title">📋 コピペ用プロンプト</div>
+    <div class="prompt-wrapper">
+      <div class="prompt-toolbar">
+        <span class="prompt-lang">PROMPT · コピーして貼り付けるだけ</span>
+        <button class="copy-btn" onclick="copyPrompt()">📋 コピー</button>
+      </div>
+      <div class="prompt-code" id="promptText"><span class="comment"># 参加者データ分析プロンプト</span>
+
+あなたは優秀なデータアナリストです。
+以下の参加者データを分析し、NPO法人の<span class="keyword">【事業名や報告書名】</span>に記載できる
+「参加者概要」セクションを作成してください。
+
+<span class="var">【データを以下に貼り付けてください】</span>
+---
+（ここにExcelやスプレッドシートからコピーした表データを貼り付ける）
+（例：参加回数、年代、性別、居住地域、参加動機 などの列が含まれる表）
+---
+
+<span class="comment"># 以下の項目を含めて分析してください：</span>
+1. 参加者の基本属性（年代・性別・地域の内訳）
+2. リピーター率（複数回参加者の割合）
+3. 全体的な傾向と特徴（2〜3文の総評）
+4. データから読み取れる課題や改善の示唆（箇条書き2〜3点）
+5. 報告書にそのまま使える「参加者概要」文章（200字程度）
+
+<span class="comment"># 出力の注意点：</span>
+- 専門用語は使わず、NPO職員が読んでわかる言葉で書いてください
+- 数値は「約〇〇%」「〇〇名中〇〇名」など具体的に表現してください
+- 不明な項目は「データなし」と記載してください
+</div>
+    </div>
+  </section>
+
+  <!-- Section 3: Annotation -->
+  <section class="section" id="annotation">
+    <div class="section-label">SECTION 03</div>
+    <div class="section-title">💬 プロンプトの意図・解説</div>
+    <div class="anno-list">
+      <div class="anno-card">
+        <div class="anno-line">「優秀なデータアナリストです」</div>
+        <div class="anno-desc">AIに役割を与えることで、分析の視点が一定します。「NPOスタッフです」にするとやさしい表現になりますが、分析の深さを優先するなら専門家役割が有効です。</div>
+      </div>
+      <div class="anno-card">
+        <div class="anno-line">【事業名や報告書名】</div>
+        <div class="anno-desc">ここに具体的な事業名（例：「2025年度生活困窮者支援事業」）を入れると、出力の文体が報告書の文脈に合わさります。汎用プロンプトをそのまま使うより格段に使いやすくなります。</div>
+      </div>
+      <div class="anno-card">
+        <div class="anno-line">「リピーター率（複数回参加者の割合）」</div>
+        <div class="anno-desc">NPOの事業評価では継続関与率が重要指標です。この一行を入れることで、AIが参加回数列を見つけて自動計算・解釈してくれます。</div>
+      </div>
+      <div class="anno-card">
+        <div class="anno-line">「報告書にそのまま使える文章（200字程度）」</div>
+        <div class="anno-desc">分析結果だけでなく「貼り付け可能な文章」を一緒に出力させることで、後から文章化する手間がなくなります。字数指定することで報告書フォーマットに収まりやすくなります。</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 4: Steps -->
+  <section class="section" id="steps">
+    <div class="section-label">SECTION 04</div>
+    <div class="section-title">🪜 使い方 3ステップ</div>
+    <div class="stepper">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">データを匿名化する</div>
+          <div class="step-desc">ExcelやGoogleスプレッドシートの参加者リストを開きます。氏名・住所・電話番号・メールアドレスなどの個人情報が含まれる列は<strong>削除または空白に</strong>してから作業を進めてください。</div>
+          <div class="step-tip">💡 年代（20代・30代…）、性別、居住地域（市区町村レベル）、参加回数、参加動機などの列はそのまま使えます。</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">データをコピーしてプロンプトに貼り付ける</div>
+          <div class="step-desc">表データを選択してコピー（Ctrl+C）し、上のプロンプトの「ここにデータを貼り付ける」部分に貼り付けます。【事業名や報告書名】の部分も具体的な名前に書き換えましょう。</div>
+          <div class="step-tip">💡 ChatGPTやClaude（claude.ai）どちらでも使えます。行が多い場合は「〜行目まで」と分割して貼り付けてもOKです。</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">出力を確認・報告書に貼り付ける</div>
+          <div class="step-desc">AIが分析結果を出力したら、内容を確認します。数値が正しいか、データと矛盾がないかをチェックしてから、報告書の「参加者概要」欄にそのまま使えます。</div>
+          <div class="step-tip">💡 「もっと簡潔にして」「子ども向け事業らしい文体にして」と続けて伝えると、さらに調整してくれます。</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 5: Table -->
+  <section class="section" id="table">
+    <div class="section-label">SECTION 05</div>
+    <div class="section-title">📂 どんなデータに使える？</div>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>データの種類</th>
+          <th>使えるか</th>
+          <th>ポイント</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>参加者属性リスト（年代・性別・地域）</td>
+          <td><span class="badge badge-ok">✅ OK</span></td>
+          <td>最もよく使われるケース。列名をそのまま貼ればOK</td>
+        </tr>
+        <tr>
+          <td>ボランティア活動記録（参加日・時間・担当）</td>
+          <td><span class="badge badge-ok">✅ OK</span></td>
+          <td>「延べ参加人数」「平均活動時間」まで出してくれる</td>
+        </tr>
+        <tr>
+          <td>会員名簿（入会年・会費種別・地区）</td>
+          <td><span class="badge badge-ok">✅ OK</span></td>
+          <td>氏名列を削除してから使用。会員層の傾向分析に有効</td>
+        </tr>
+        <tr>
+          <td>事業実績月次記録（日付・参加数・収支）</td>
+          <td><span class="badge badge-ok">✅ OK</span></td>
+          <td>月別・季節ごとの傾向まで分析してくれる</td>
+        </tr>
+        <tr>
+          <td>氏名・住所・電話番号が含まれるまま</td>
+          <td><span class="badge badge-ng">⛔ NG</span></td>
+          <td>必ず個人情報を削除・匿名化してから使用すること</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Section 6: Warnings -->
+  <section class="section" id="warnings">
+    <div class="section-label">SECTION 06</div>
+    <div class="section-title">⚠️ 注意点</div>
+    <div class="warn-list">
+      <div class="warn-card">
+        <span class="warn-icon">🔒</span>
+        <span><strong>個人情報は必ず削除：</strong>氏名・住所・電話番号・メールアドレスなど、個人が特定できる情報はAIに貼り付けないでください。年代・性別・地域（市区町村）などの統計的な属性情報だけを使いましょう。</span>
+      </div>
+      <div class="warn-card">
+        <span class="warn-icon">🔍</span>
+        <span><strong>数値は必ずご自身で確認を：</strong>AIは数値の計算を間違えることがあります（ハルシネーションと言います）。出力された割合や合計数は、元のデータと照らし合わせて必ず確認してください。</span>
+      </div>
+      <div class="warn-card">
+        <span class="warn-icon">📋</span>
+        <span><strong>大量データは分割して貼る：</strong>参加者が500人を超えるような大量データの場合、一度に全部貼ると処理できないことがあります。「1〜200行」「201〜400行」と分けて分析し、最後にまとめてもらいましょう。</span>
+      </div>
+      <div class="warn-card">
+        <span class="warn-icon">💬</span>
+        <span><strong>出力が使いにくいときは追加指示を：</strong>「もっと短くして」「です・ます調にして」「箇条書きではなく文章にして」などと続けて伝えると、スタイルを調整してくれます。</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Back banner -->
+  <div class="back-banner">
+    <a href="2026-04-10_data_yoor.html">← 投稿文ページに戻る</a>
+  </div>
+
+  <footer>© 2026 Path Link</footer>
+
+  <script>
+    function copyPrompt() {
+      const text = document.getElementById('promptText').innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = document.querySelector('.copy-btn');
+        btn.textContent = '✅ コピーしました！';
+        setTimeout(() => { btn.textContent = '📋 コピー'; }, 2000);
+      });
+    }
+  </script>
+
+</body>
+</html>
