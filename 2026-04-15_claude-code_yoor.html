@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🛠️ Claude Code入門Tips | NPO AI Community by PathLink</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif;
+      background: #f5f7f8;
+      color: #2d3748;
+      line-height: 1.7;
+    }
+
+    /* Header */
+    .pl-header {
+      background: #fff;
+      border-top: 4px solid #3DBFBE;
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+    .pl-logo {
+      font-size: 18px;
+      font-weight: 800;
+      color: #3DBFBE;
+      letter-spacing: -0.5px;
+    }
+    .pl-tagline {
+      font-size: 12px;
+      color: #718096;
+      border-left: 2px solid #e2e8f0;
+      padding-left: 12px;
+    }
+
+    /* Main container */
+    .container {
+      max-width: 640px;
+      margin: 32px auto;
+      padding: 0 16px 48px;
+    }
+
+    /* Card */
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(61,191,190,0.10);
+    }
+
+    /* Card header */
+    .card-header {
+      background: linear-gradient(135deg, #3DBFBE 0%, #2a9d9c 100%);
+      padding: 28px 28px 24px;
+      color: #fff;
+    }
+    .type-badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.25);
+      border: 1px solid rgba(255,255,255,0.4);
+      border-radius: 20px;
+      padding: 4px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+    .card-title {
+      font-size: 22px;
+      font-weight: 800;
+      line-height: 1.35;
+      margin-bottom: 8px;
+    }
+    .card-date {
+      font-size: 13px;
+      opacity: 0.85;
+    }
+
+    /* Body */
+    .card-body {
+      padding: 28px;
+    }
+
+    /* Hook */
+    .hook {
+      background: #f0fafa;
+      border-left: 4px solid #3DBFBE;
+      border-radius: 0 12px 12px 0;
+      padding: 16px 18px;
+      font-size: 16px;
+      font-weight: 600;
+      color: #2c7a7b;
+      margin-bottom: 20px;
+    }
+
+    /* Lead text */
+    .lead {
+      font-size: 15px;
+      color: #4a5568;
+      margin-bottom: 22px;
+    }
+    .lead strong { color: #2c7a7b; }
+
+    /* Use case section */
+    .usecase-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #718096;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 12px;
+    }
+    .usecase-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 22px;
+    }
+    .usecase-item {
+      background: #f8fffe;
+      border: 1px solid #c6f0ef;
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .usecase-emoji { font-size: 20px; }
+    .usecase-text { color: #2d3748; }
+
+    /* Warning */
+    .warning {
+      background: #fffbeb;
+      border: 1px solid #f6e05e;
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 13.5px;
+      color: #744210;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .warning-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+    /* CTA */
+    .cta-btn {
+      display: block;
+      background: linear-gradient(135deg, #3DBFBE 0%, #2a9d9c 100%);
+      color: #fff;
+      text-decoration: none;
+      text-align: center;
+      padding: 16px 24px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      box-shadow: 0 4px 14px rgba(61,191,190,0.4);
+      transition: transform 0.15s, box-shadow 0.15s;
+      margin-bottom: 8px;
+    }
+    .cta-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(61,191,190,0.5);
+    }
+    .cta-note {
+      text-align: center;
+      font-size: 12px;
+      color: #a0aec0;
+      margin-bottom: 24px;
+    }
+
+    /* Next preview */
+    .next-preview {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 12px;
+      padding: 16px 20px;
+      color: #fff;
+    }
+    .next-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      opacity: 0.8;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .next-text {
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      margin-top: 32px;
+      font-size: 12px;
+      color: #a0aec0;
+    }
+    .footer a { color: #3DBFBE; text-decoration: none; }
+  </style>
+</head>
+<body>
+
+  <!-- PathLink Header -->
+  <header class="pl-header">
+    <div class="pl-logo">PathLink</div>
+    <div class="pl-tagline">NPO AI Community — 毎日届くAI活用ヒント</div>
+  </header>
+
+  <div class="container">
+    <div class="card">
+
+      <!-- Card Header -->
+      <div class="card-header">
+        <div class="type-badge">🛠️ Claude Code入門Tips</div>
+        <h1 class="card-title">CLAUDE.mdを設定して<br>NPO専用AIアシスタントを作ろう！</h1>
+        <div class="card-date">2026年4月15日（水）</div>
+      </div>
+
+      <!-- Card Body -->
+      <div class="card-body">
+
+        <!-- Hook -->
+        <div class="hook">
+          毎回「うちのNPOは〇〇という団体で…」と一から説明するのって面倒ですよね？😩
+        </div>
+
+        <!-- Lead -->
+        <p class="lead">
+          Claude Codeに <strong>「CLAUDE.md」というファイルを1つ置くだけ</strong>で、
+          AIが最初からうちの組織のことを把握して動いてくれます✨
+          毎回ゼロから説明する手間がなくなります！
+        </p>
+
+        <!-- Use Cases -->
+        <div class="usecase-title">こんな場面で使えます！</div>
+        <div class="usecase-list">
+          <div class="usecase-item">
+            <span class="usecase-emoji">📝</span>
+            <span class="usecase-text">助成金申請書の作成（毎回同じ事業説明が不要に！）</span>
+          </div>
+          <div class="usecase-item">
+            <span class="usecase-emoji">📊</span>
+            <span class="usecase-text">会員向けお知らせ文の自動作成</span>
+          </div>
+          <div class="usecase-item">
+            <span class="usecase-emoji">📅</span>
+            <span class="usecase-text">スタッフ向け週次報告書のまとめ</span>
+          </div>
+        </div>
+
+        <!-- Warning -->
+        <div class="warning">
+          <span class="warning-icon">⚠️</span>
+          <span>CLAUDE.mdに個人情報（氏名・住所・連絡先など）は書かないようにしましょう。組織概要や文章スタイルの設定に留めるのがポイントです。</span>
+        </div>
+
+        <!-- CTA -->
+        <a class="cta-btn" href="2026-04-15_claude-code_detail.html">
+          詳しい設定手順とコピペ用テンプレートはこちら 👇
+        </a>
+        <p class="cta-note">所要時間：約10分でセットアップ完了！</p>
+
+        <!-- Next Preview -->
+        <div class="next-preview">
+          <div class="next-label">NEXT — 明日（木曜）</div>
+          <div class="next-text">📚 AI基礎知識 — ハルシネーションって何？<br>AIが「ウソ」をつく仕組みと、NPOでの対策</div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="footer">
+      <p>PathLink NPO AI Community &copy; 2026 &nbsp;|&nbsp; <a href="https://pathlink.jp">pathlink.jp</a></p>
+    </div>
+  </div>
+
+</body>
+</html>
